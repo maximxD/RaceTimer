@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">RaceTimer</string>
+    <string name="start_time">0.000</string>
+    <string name="score"><font color='blue'>0</font> : 0</string>
+    <string name="generating_scramble">Generating scramble…</string>
+    <string name="puzzles">puzzles</string>
+    <string name="penalty">penalty</string>
+    <string name="cube2x2">2x2</string>
+    <string name="cube3x3">3x3</string>
+    <string name="cube4x4">4x4</string>
+    <string name="cube5x5">5x5</string>
+    <string name="cube6x6">6x6</string>
+    <string name="cube7x7">7x7</string>
+    <string name="pyraminx">PYRAMINX</string>
+    <string name="megaminx">MEGAMINX</string>
+    <string name="skewb">SKEWB</string>
+    <string name="square1">SQUARE-1</string>
+    <string name="ok">OK</string>
+    <string name="plus2">+2</string>
+    <string name="dnf">DNF</string>
+    <string name="avg5">avg5:</string>
+    <string name="avg12">avg12:</string>
+    <string name="avg25">avg25:</string>
+    <string name="avg50">avg50:</string>
+    <string name="avg100">avg100:</string>
+    <string name="stats">STATS</string>
+    <string name="solves">solves: </string>
+</resources>

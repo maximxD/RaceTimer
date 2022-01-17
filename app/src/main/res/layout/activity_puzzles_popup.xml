@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/puzzle_popup"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/half_visible">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/rounded_layout_shape"
+        android:padding="20dp"
+        android:layout_gravity="center">
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/invisible"
+            android:columnCount="6"
+            android:rowCount="4">
+
+            <Button
+                android:id="@+id/btn_cube2x2"
+                android:text="@string/cube2x2"
+                android:textSize="20sp"
+                android:textAllCaps="false"
+                android:paddingVertical="15sp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/rounded_btn_shape"
+                android:layout_columnSpan="2" />
+
+            <Button
+                android:id="@+id/btn_cube3x3"
+                android:text="@string/cube3x3"
+                android:textSize="20sp"
+                android:textAllCaps="false"
+                android:paddingVertical="15sp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/rounded_btn_shape"
+                android:layout_columnSpan="2"/>
+
+            <Button
+                android:id="@+id/btn_cube4x4"
+                android:text="@string/cube4x4"
+                android:textSize="20sp"
+                android:textAllCaps="false"
+                android:paddingVertical="15sp"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/rounded_btn_shape"
+                android:layout_columnSpan="2"/>
+
+            <Button
+                android:id="@+id/btn_cube5x5"
+                android:text="@string/cube5x5"
+                android:textSize="20sp"
+                android:textAllCaps="false"
+                android:paddingVertical="15sp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/rounded_btn_shape"
+                android:layout_columnSpan="2"/>
+
+            <Button
+                android:id="@+id/btn_cube6x6"
+                android:text="@string/cube6x6"
+                android:textSize="20sp"
+                android:textAllCaps="false"
+                android:paddingVertical="15sp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/rounded_btn_shape"
+                android:layout_columnSpan="2"/>
+
+            <Button
+                android:id="@+id/btn_cube7x7"
+                android:text="@string/cube7x7"
+                android:textSize="20sp"
+                android:textAllCaps="false"
+                android:paddingVertical="15sp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/rounded_btn_shape"
+                android:layout_columnSpan="2"/>
+
+        </GridLayout>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/invisible"
+            android:columnCount="2"
+            android:rowCount="4">
+            <Button
+                android:id="@+id/btn_pyraminx"
+                android:layout_columnWeight="1"
+                android:layout_rowWeight="1"
+                android:text="@string/pyraminx"
+                android:paddingVertical="15sp"
+                android:textSize="20sp"
+                android:textAllCaps="false"
+                android:layout_marginEnd="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/rounded_btn_shape"/>
+
+            <Button
+                android:id="@+id/btn_square1"
+                android:text="@string/square1"
+                android:textSize="20sp"
+                android:textAllCaps="false"
+                android:paddingVertical="15sp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_columnWeight="1"
+                android:layout_rowWeight="1"
+                android:background="@drawable/rounded_btn_shape"/>
+
+            <Button
+                android:id="@+id/btn_skewb"
+                android:layout_columnWeight="1"
+                android:layout_rowWeight="1"
+                android:text="@string/skewb"
+                android:paddingVertical="15sp"
+                android:textSize="20sp"
+                android:textAllCaps="false"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/rounded_btn_shape"/>
+
+            <Button
+                android:id="@+id/btn_megaminx"
+                android:layout_columnWeight="1"
+                android:layout_rowWeight="1"
+                android:text="@string/megaminx"
+                android:paddingVertical="15sp"
+                android:textSize="20sp"
+                android:textAllCaps="false"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/rounded_btn_shape"/>
+        </GridLayout>
+    </LinearLayout>
+
+</FrameLayout>
