@@ -5,40 +5,36 @@ import androidx.core.text.HtmlCompat;
 
 import android.os.Bundle;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import org.worldcubeassociation.tnoodle.scrambles.PuzzleRegistry;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
-    private FrameLayout main_layout;
-    private TimeButton btn_time_1, btn_time_2;
+    protected FrameLayout main_layout;
+    protected TimeButton btn_time_1, btn_time_2;
+
+    protected String[] puzzle_properties = {"THREE", "23"};    // format: {<PUZZLE>, <FONT_SIZE>}
+
+    protected final ArrayList<int[]> solve_times_1 = new ArrayList<>();    // format: {<TIME>, <PENALTY_ID>}
+    protected final ArrayList<int[]> solve_times_2 = new ArrayList<>();    // format: {<TIME>, <PENALTY_ID>}
+
+    protected final float[] averages_1 = {0, 0, 0, 0, 0};
+    protected final float[] averages_2 = {0, 0, 0, 0, 0};
+
     private TextView textView_score_1, textView_score_2;
     private TextView textView_scramble_1, textView_scramble_2;
 
-    private String[] puzzle_properties = {"THREE", "23"};    // format: {<PUZZLE>, <FONT_SIZE>}
     private final ArrayList<String> scrambles = new ArrayList<>();
 
     private final ArrayList<Integer> wins_list = new ArrayList<>();    // list of winners for each solve
-
-    private final ArrayList<int[]> solve_times_1 = new ArrayList<>();    // format: {<TIME>, <PENALTY_ID>}
-    private final ArrayList<int[]> solve_times_2 = new ArrayList<>();    // format: {<TIME>, <PENALTY_ID>}
-
-    private final float[] averages_1 = {0, 0, 0, 0, 0};
-    private final float[] averages_2 = {0, 0, 0, 0, 0};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,155 +53,61 @@ public class MainActivity extends AppCompatActivity {
 
         process_new_scramble();
 
-        btn_time_1.textView = textView_time_1;
-        btn_time_2.textView = textView_time_2;
-        btn_time_1.mainActivity = this;
-        btn_time_2.mainActivity = this;
-
-        final int[] BUTTONS_IDS = new int[] {R.id.btn_cube2x2, R.id.btn_cube3x3, R.id.btn_cube4x4,
-                R.id.btn_cube5x5, R.id.btn_cube6x6, R.id.btn_cube7x7,
-                R.id.btn_pyraminx, R.id.btn_square1, R.id.btn_skewb,
-                R.id.btn_megaminx};
-        final Map<Integer, String[]> PUZZLES_DICT = get_id_to_puzzle_dict(BUTTONS_IDS);
+        btn_time_1.text_view_time = textView_time_1;
+        btn_time_2.text_view_time = textView_time_2;
+        btn_time_1.main_activity = this;
+        btn_time_2.main_activity = this;
 
         Button btn_puzzles = findViewById(R.id.btn_puzzles);
         btn_puzzles.setOnClickListener(view -> {
             if (!btn_time_1.is_started && !btn_time_2.is_started) {
-                bind_change_puzzle_buttons(get_popup_window(R.layout.activity_puzzles_popup), PUZZLES_DICT, BUTTONS_IDS);
+                create_puzzle_popup_window();
             }
         });
 
-        Button btn_options = findViewById(R.id.btn_options);
-        btn_options.setOnClickListener(view -> {
+        Button btn_penalties = findViewById(R.id.btn_penalties);
+        btn_penalties.setOnClickListener(view -> {
             if (btn_time_1.is_processed && btn_time_2.is_processed && !btn_time_1.is_started && !btn_time_2.is_started) {
-                bind_penalty_buttons(get_popup_window(R.layout.activity_penalties_popup));
+                create_penalty_popup_window();
             }
         });
 
         Button btn_stats_1 = findViewById(R.id.stats_1);
         btn_stats_1.setOnClickListener(view -> {
             if (!btn_time_1.is_started && !btn_time_2.is_started) {
-                set_averages(get_popup_window(R.layout.activity_stats_popup));
+                create_stats_popup_window();
             }
         });
 
         Button btn_stats_2 = findViewById(R.id.stats_2);
         btn_stats_2.setOnClickListener(view -> {
             if (!btn_time_1.is_started && !btn_time_2.is_started) {
-                set_averages(get_popup_window(R.layout.activity_stats_popup));
+                create_stats_popup_window();
             }
         });
     }
 
-    private Object[] get_popup_window(int layout) {
-        // create popup window and return it to bind buttons on it
-        LayoutInflater inflater = (LayoutInflater)
-                getSystemService(LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(layout, main_layout, false);
-
-        int width = LinearLayout.LayoutParams.MATCH_PARENT;
-        int height = LinearLayout.LayoutParams.MATCH_PARENT;
-        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, true);
-
-        popupWindow.showAtLocation(this.main_layout, Gravity.CENTER, 0, 0);
-        popupWindow.setContentView(popupView);
-
-        popupView.setOnClickListener(view -> popupWindow.dismiss());
-        return new Object[]{popupView, popupWindow};
+    private void create_penalty_popup_window() {
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.popup_window_penalty, main_layout, false);
+        new MyPopupWindow(popupView, this, R.layout.popup_window_penalty);
     }
 
-    private void set_averages(Object[] popupObjects) {
-        View popupView = (View) popupObjects[0];
+    private void create_puzzle_popup_window() {
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.popup_window_puzzles, main_layout, false);
 
-        LinearLayout ll_avg_list_1, ll_avg_list_2;
-        ll_avg_list_1 = popupView.findViewById(R.id.avg_list_1);
-        ll_avg_list_2 = popupView.findViewById(R.id.avg_list_2);
-
-        int[] avg_num_list = {5, 12, 25, 50, 100};
-        String[] avg_str_list = {getString(R.string.avg5), getString(R.string.avg12), getString(R.string.avg25),
-                getString(R.string.avg50), getString(R.string.avg100)};
-
-        int column_in_ll = 0;
-        for (int i = 0; i < 5; i++) {
-            if (solve_times_1.size() >= avg_num_list[i]) {
-                // get LinearLayout (column) in LinearLayout of averages first cuber
-                LinearLayout ll_column_avg_1 = (LinearLayout) ll_avg_list_1.getChildAt(column_in_ll);
-                // get TextView in LinearLayout
-                TextView text_view_avg_1 = (TextView) ll_column_avg_1.getChildAt(i % 3);
-                // get LinearLayout (column) in LinearLayout of averages second cuber
-                LinearLayout ll_column_avg_2 = (LinearLayout) ll_avg_list_2.getChildAt(column_in_ll);
-                // get TextView in LinearLayout
-                TextView text_view_avg_2 = (TextView) ll_column_avg_2.getChildAt(i % 3);
-                String new_avg_str;
-                if (averages_1[i] != 0) {
-                    new_avg_str = avg_str_list[i] + " " + TimeButton.get_formatted_time(averages_1[i], 2);
-                } else {
-                    new_avg_str = avg_str_list[i] + " DNF";
-                }
-                text_view_avg_1.setText(new_avg_str);
-                if (averages_2[i] != 0) {
-                    new_avg_str = avg_str_list[i] + " " + TimeButton.get_formatted_time(averages_2[i], 2);
-                } else {
-                    new_avg_str = avg_str_list[i] + " DNF";
-                }
-                text_view_avg_2.setText(new_avg_str);
-            }
-            else {
-                break;
-            }
-
-            if (i == 2) {
-                // go to second column in LinearLayout of averages
-                column_in_ll++;
-            }
-        }
-        // set solves (format: solves: solves_length_without_dnf / solves_length)
-        LinearLayout ll_column = (LinearLayout) ll_avg_list_1.getChildAt(1);
-        TextView text_view_solve = (TextView) ll_column.getChildAt(2);
-        ArrayList<int[]> solve_times_wo_dnf = new ArrayList<>(solve_times_1);
-        solve_times_wo_dnf.removeIf(n -> (n[1] == 3));
-        String solves_str = getString(R.string.solves) + " " + solve_times_wo_dnf.size() + "/" + solve_times_1.size();
-        text_view_solve.setText(solves_str);
-        ll_column = (LinearLayout) ll_avg_list_2.getChildAt(1);
-        text_view_solve = (TextView) ll_column.getChildAt(2);
-        solve_times_wo_dnf = new ArrayList<>(solve_times_2);
-        solve_times_wo_dnf.removeIf(n -> (n[1] == 3));
-        solves_str = getString(R.string.solves) + " " + solve_times_wo_dnf.size() + "/" + solve_times_2.size();
-        text_view_solve.setText(solves_str);
+        new MyPopupWindow(popupView, this, R.layout.popup_window_puzzles);
     }
 
-    private void bind_penalty_buttons(Object[] popupObjects) {
-        // bind penalty buttons on popup window
-        View popupView = (View) popupObjects[0];
-        PopupWindow popupWindow = (PopupWindow) popupObjects[1];
+    private void create_stats_popup_window() {
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = inflater.inflate(R.layout.popup_window_stats, main_layout, false);
 
-        LinearLayout penalties_1 = popupView.findViewById(R.id.penalties_1);
-        LinearLayout penalties_2 = popupView.findViewById(R.id.penalties_2);
-
-        // bind penalty buttons for first cuber
-        for (int i = 0; i < 3; i++) {
-            int id = i;
-            penalties_1.getChildAt(i).setOnClickListener(view -> {
-                set_penalty(solve_times_1, btn_time_1.textView, id + 1);
-                calculate_all_avg();
-                recalculate_score();
-                popupWindow.dismiss();
-            });
-        }
-
-        // bind penalty buttons for second cuber
-        for (int i = 0; i < 3; i++) {
-            int id = i;
-            penalties_2.getChildAt(i).setOnClickListener(view -> {
-                set_penalty(solve_times_2, btn_time_2.textView, id + 1);
-                calculate_all_avg();
-                recalculate_score();
-                popupWindow.dismiss();
-            });
-        }
+        new MyPopupWindow(popupView, this, R.layout.popup_window_stats);
     }
 
-    private void recalculate_score() {
+    protected void recalculate_score() {
         if (wins_list.size() > 0) {
             wins_list.remove(wins_list.size() - 1);
 
@@ -249,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void set_penalty(ArrayList<int[]> solve_times, TextView textView, int penalty_id) {
+    protected void set_penalty(ArrayList<int[]> solve_times, TextView textView, int penalty_id) {
         // set penalty on current solve (OK -> penalty_id == 1, +2 -> penalty_id == 2, DNF -> penalty_id == 3)
         int number_of_solves = solve_times.size();
         if (number_of_solves > 0 && solve_times.get(number_of_solves - 1)[1] != penalty_id) {
@@ -265,9 +167,9 @@ public class MainActivity extends AppCompatActivity {
             solve_times.remove(number_of_solves - 1);
             String new_time_str;
             if (penalty_id == 1) {
-                new_time_str = TimeButton.get_formatted_time(curr_time, 3);
+                new_time_str = TimeButton.get_formatted_time(curr_time);
             } else if (penalty_id == 2) {
-                new_time_str = TimeButton.get_formatted_time(curr_time, 3) + "+";
+                new_time_str = TimeButton.get_formatted_time(curr_time) + "+";
             } else {
                 new_time_str = getString(R.string.dnf);
             }
@@ -275,26 +177,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void bind_change_puzzle_buttons(Object[] popupObjects, Map<Integer, String[]> PUZZLES_DICT, int[] BUTTONS_IDS) {
-        // bind change puzzle buttons on popup window
-        View popupView = (View) popupObjects[0];
-        PopupWindow popupWindow = (PopupWindow) popupObjects[1];
-
-        Button[] buttons = new Button[10];
-        for (int i = 0; i < 10; i++) {
-            buttons[i] = popupView.findViewById(BUTTONS_IDS[i]);
-        }
-
-        for (Button button: buttons) {
-            button.setOnClickListener(view -> {
-                popupWindow.dismiss();
-                change_puzzle(PUZZLES_DICT, button);
-                reset_all();
-            });
-        }
-    }
-
-    private void calculate_all_avg() {
+    protected void calculate_all_avg() {
         int[] avg_num_list = {5, 12, 25, 50, 100};
         int[] thrown_list = {1, 1, 2, 3, 5};
         for (int i = 0; i < 5; i++) {
@@ -354,11 +237,9 @@ public class MainActivity extends AppCompatActivity {
             while (solve_times.get(i)[0] < main[0]) {
                 i++;
             }
-
             while (solve_times.get(j)[0] > main[0]) {
                 j--;
             }
-
             if (i <= j) {
                 Collections.swap(solve_times, i, j);
                 i++;
@@ -368,12 +249,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (low < j)
             sort_solve_times(solve_times, low, j);
-
         if (high > i)
             sort_solve_times(solve_times, i, high);
     }
 
-    private void reset_all() {
+    protected void reset_all() {
         // reset all stats
         scrambles.clear();
         solve_times_1.clear();
@@ -382,8 +262,8 @@ public class MainActivity extends AppCompatActivity {
         wins_list.clear();
         btn_time_1.is_processed = true;
         btn_time_2.is_processed = true;
-        btn_time_1.textView.setText(getString(R.string.start_time));
-        btn_time_2.textView.setText(getString(R.string.start_time));
+        btn_time_1.text_view_time.setText(getString(R.string.start_time));
+        btn_time_2.text_view_time.setText(getString(R.string.start_time));
         set_score(0, 0, 1, 1);
     }
 
@@ -392,29 +272,14 @@ public class MainActivity extends AppCompatActivity {
         textView_scramble_2.setTextSize(TypedValue.COMPLEX_UNIT_SP, font_size);
     }
 
-    private void change_puzzle(Map<Integer, String[]> PUZZLES_DICT, Button button) {
-        puzzle_properties = Objects.requireNonNull(PUZZLES_DICT.get(button.getId()));
-    }
-
-    private Map<Integer, String[]> get_id_to_puzzle_dict(int[] BUTTONS_IDS){
-        // create id to puzzle properties dictionary (R.id.<button> : {<PUZZLE>, <FONT_SIZE>})
-        String[][] PUZZLE_LIST = {{"TWO", "25"}, {"THREE", "23"}, {"FOUR_FAST", "19"}, {"FIVE", "18"},
-                {"SIX", "17"}, {"SEVEN", "15"}, {"PYRA", "25"}, {"SQ1", "20"}, {"SKEWB", "25"}, {"MEGA", "16"}};
-        Map<Integer, String[]> puzzles_dict = new HashMap<>();
-        for (int i = 0; i < 10; i++) {
-            puzzles_dict.put(BUTTONS_IDS[i], PUZZLE_LIST[i]);
-        }
-        return puzzles_dict;
-    }
-
     protected boolean isBothSolved() {
         // did both cubers solved cubes?
         return !btn_time_1.is_processed && !btn_time_2.is_processed;
     }
 
     protected void processTimes() {
-        int time1 = (int) btn_time_1.curr_time;
-        int time2 = (int) btn_time_2.curr_time;
+        int time1 = btn_time_1.curr_time;
+        int time2 = btn_time_2.curr_time;
 
         solve_times_1.add(new int[] {time1, 1});
         solve_times_2.add(new int[] {time2, 1});

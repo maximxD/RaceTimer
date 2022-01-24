@@ -4,6 +4,9 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Projects/RaceTimer/app/src/main/res/layout/activity_main.xml" value="0.14175724637681159" />
+        <entry key="..\:/Projects/RaceTimer/app/src/main/res/layout/activity_penalty_popup.xml" value="0.23777173913043478" />
+        <entry key="..\:/Projects/RaceTimer/app/src/main/res/layout/activity_puzzles_popup.xml" value="0.13020833333333334" />
+        <entry key="..\:/Projects/RaceTimer/app/src/main/res/layout/activity_stats_popup.xml" value="0.4" />
       </map>
     </option>
   </component>

@@ -14,15 +14,15 @@ import java.util.TimerTask;
 
 public class TimeButton extends androidx.appcompat.widget.AppCompatButton {
 
-    protected boolean is_started = false;
     private long start_time;
     private Timer timer;
-    private long pressed_counter = 0;    // need to get right delay before start
-    protected long curr_time;
-    protected boolean is_processed = true;
-    protected TextView textView;
-    protected MainActivity mainActivity;
+    private int pressed_counter = 0;    // need to get right delay before start
     private final int default_color = this.getCurrentTextColor();
+    protected boolean is_started = false;
+    protected int curr_time;
+    protected boolean is_processed = true;
+    protected TextView text_view_time;
+    protected MainActivity main_activity;
 
     public TimeButton(Context context) {
         super(context);
@@ -36,13 +36,13 @@ public class TimeButton extends androidx.appcompat.widget.AppCompatButton {
         super(context, attrs, defStyleAttr);
     }
 
-    public static String get_formatted_time(long time, int num_of_zero) {
+    public static String get_formatted_time(int time) {
         String str_time;
         float float_time = (float) time / 1000;
         if (float_time < 60) {
-            str_time = String.format(Locale.US, "%." + num_of_zero + "f", float_time);
+            str_time = String.format(Locale.US, "%.3f", float_time);
         } else {
-            String formatted_seconds = String.format(Locale.US, ":%0" + (num_of_zero + 3) + "." + num_of_zero + "f", float_time % 60);
+            String formatted_seconds = String.format(Locale.US, ":%06.3f", float_time % 60);
             if (float_time < 3600) {
                 str_time = (int) float_time / 60 + formatted_seconds;
             } else {
@@ -52,13 +52,13 @@ public class TimeButton extends androidx.appcompat.widget.AppCompatButton {
         return str_time;
     }
 
-    public static String get_formatted_time(float time, int num_of_zero) {
+    public static String get_formatted_time(float time) {
         String str_time;
         time /= 1000;
         if (time < 60) {
-            str_time = String.format(Locale.US, "%." + num_of_zero + "f", time);
+            str_time = String.format(Locale.US, "%.2f", time);
         } else {
-            String formatted_seconds = String.format(Locale.US, ":%0" + (num_of_zero + 3) + "." + num_of_zero + "f", time % 60);
+            String formatted_seconds = String.format(Locale.US, ":%05.2f", time % 60);
             if (time < 3600) {
                 str_time = (int) time / 60 + formatted_seconds;
             } else {
@@ -91,15 +91,15 @@ public class TimeButton extends androidx.appcompat.widget.AppCompatButton {
                 // if the timer was already started, it means that the timer should be stopped.
                 timer.cancel();
                 is_processed = false;
-                if (mainActivity.isBothSolved()) {
-                    mainActivity.process_new_scramble();
-                    mainActivity.processTimes();
+                if (main_activity.isBothSolved()) {
+                    main_activity.process_new_scramble();
+                    main_activity.processTimes();
                 }
                 System.gc();
                 is_started = !is_started;
             } else {
                 // if the timer is not started, prepare it to start
-                textView.setTextColor(Color.RED);
+                text_view_time.setTextColor(Color.RED);
                 curr_time = 0;
                 Timer timer = new Timer();
                 long local_counter = pressed_counter;    // copy of pressed_counter to it later
@@ -116,14 +116,14 @@ public class TimeButton extends androidx.appcompat.widget.AppCompatButton {
     private void is_still_pressed(long counter) {
         if (pressed_counter == counter) {
             // is button still pressed and was not released during delay
-            textView.setTextColor(Color.GREEN);
+            text_view_time.setTextColor(Color.GREEN);
             is_started = !is_started;
         }
     }
 
     private void on_release_timer() {
         pressed_counter++;  // changing pressed_counter to indicate that the button has been released
-        textView.setTextColor(default_color);
+        text_view_time.setTextColor(default_color);
         if (is_started && is_processed) {
             // if the timer was already processed (both cubers solved cubes), allow to start/stop the timer.
             // if the timer is ready to start, start it.
@@ -131,8 +131,8 @@ public class TimeButton extends androidx.appcompat.widget.AppCompatButton {
             timer = new Timer();
             TimerTask timer_task = new TimerTask() {
                 public void run() {
-                    curr_time = System.currentTimeMillis() - start_time;
-                    mainActivity.runOnUiThread(() -> textView.setText(get_formatted_time(curr_time, 3)));
+                    curr_time = (int) (System.currentTimeMillis() - start_time);
+                    main_activity.runOnUiThread(() -> text_view_time.setText(get_formatted_time(curr_time)));
                 }
             };
             timer.scheduleAtFixedRate(timer_task, 0, 1);

@@ -7,7 +7,7 @@
     android:background="@color/half_visible">
 
     <LinearLayout
-        android:id="@+id/penalties_1"
+        android:id="@+id/penalty_layout_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
@@ -18,7 +18,6 @@
         android:rotation="180">
 
         <Button
-            android:id="@+id/ok_1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textSize="25sp"
@@ -29,7 +28,6 @@
             tools:ignore="ButtonStyle" />
 
         <Button
-            android:id="@+id/plus2_1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textSize="25sp"
@@ -41,7 +39,6 @@
             tools:ignore="ButtonStyle" />
 
         <Button
-            android:id="@+id/dnf_1"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textSize="25sp"
@@ -54,7 +51,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/penalties_2"
+        android:id="@+id/penalty_layout_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="100dp"
@@ -64,7 +61,6 @@
         android:layout_gravity="bottom|center_horizontal">
 
         <Button
-            android:id="@+id/ok_2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textSize="25sp"
@@ -75,7 +71,6 @@
             tools:ignore="ButtonStyle" />
 
         <Button
-            android:id="@+id/plus2_2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textSize="25sp"
@@ -87,7 +82,6 @@
             tools:ignore="ButtonStyle" />
 
         <Button
-            android:id="@+id/dnf_2"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textSize="25sp"
