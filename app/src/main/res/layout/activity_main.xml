@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -104,9 +104,10 @@
     </LinearLayout>
 
     <View
+        android:id="@+id/dividing_line"
         android:layout_width="match_parent"
         android:layout_height="5dp"
-        android:layout_gravity="center_vertical"
+        android:layout_centerVertical="true"
         android:background="?attr/colorOnSecondary"/>
 
     <Button
@@ -118,7 +119,7 @@
         android:paddingVertical="10dp"
         android:paddingHorizontal="10dp"
         android:background="@drawable/rounded_btn_shape"
-        android:layout_gravity="center_vertical"
+        android:layout_centerVertical="true"
         android:layout_marginStart="20dp"/>
 
     <Button
@@ -130,11 +131,13 @@
         android:paddingVertical="10dp"
         android:paddingHorizontal="10dp"
         android:background="@drawable/rounded_btn_shape"
-        android:layout_gravity="center_vertical|end"
-        android:layout_marginEnd="20dp"/>
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="20dp"
+        tools:ignore="RelativeOverlap" />
 
     <Button
-        android:id="@+id/stats_1"
+        android:id="@+id/btn_stats_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/half_rounded_layout_shape"
@@ -142,13 +145,170 @@
         android:textSize="22sp"
         android:rotation="180"/>
 
+    <RelativeLayout
+        android:id="@+id/layout_stats_1"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/dividing_line"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/btn_close_stats_1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/invisible"/>
+
+        <GridLayout
+            android:id="@+id/stat_list_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/half_rounded_layout_shape"
+            android:columnCount="2"
+            android:rowCount="3"
+            android:padding="20dp"
+            android:rotation="180">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_marginBottom="5dp"
+                android:text="@string/avg5"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_marginBottom="5dp"
+                android:text="@string/avg12"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:text="@string/avg25"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_marginBottom="5dp"
+                android:text="@string/avg50"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_marginBottom="5dp"
+                android:text="@string/avg100"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"/>
+
+        </GridLayout>
+
+    </RelativeLayout>
+
     <Button
-        android:id="@+id/stats_2"
+        android:id="@+id/btn_stats_2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/half_rounded_layout_shape"
         android:text="@string/stats"
         android:textSize="22sp"
-        android:layout_gravity="bottom"/>
+        android:layout_alignParentBottom="true"/>
 
-</FrameLayout>
+    <RelativeLayout
+        android:id="@+id/layout_stats_2"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/dividing_line"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/btn_close_stats_2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/invisible"/>
+
+        <GridLayout
+            android:id="@+id/stat_list_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/half_rounded_layout_shape"
+            android:columnCount="2"
+            android:rowCount="3"
+            android:padding="20dp"
+            android:layout_alignParentBottom="true">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_marginBottom="5dp"
+                android:text="@string/avg5"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_marginBottom="5dp"
+                android:text="@string/avg12"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:text="@string/avg25"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_marginBottom="5dp"
+                android:text="@string/avg50"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_marginBottom="5dp"
+                android:text="@string/avg100"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:textSize="20sp"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill"/>
+
+        </GridLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>

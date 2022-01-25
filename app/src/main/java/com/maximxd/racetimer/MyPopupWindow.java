@@ -3,7 +3,6 @@ package com.maximxd.racetimer;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -25,46 +24,12 @@ public class MyPopupWindow extends PopupWindow {
 
         if (popup_window_id == R.layout.popup_window_puzzles) {
             bind_change_puzzle_buttons(popup_view, main_activity);
-        } else if (popup_window_id == R.layout.popup_window_penalty) {
+        } else {
             bind_penalty_button(popup_view.findViewById(R.id.penalty_layout_1), main_activity.solve_times_1,
                     main_activity.btn_time_1.text_view_time, main_activity);
             bind_penalty_button(popup_view.findViewById(R.id.penalty_layout_2), main_activity.solve_times_2,
                     main_activity.btn_time_2.text_view_time, main_activity);
-        } else {
-            set_average(popup_view.findViewById(R.id.stat_list_1), main_activity.solve_times_1, main_activity.averages_1);
-            set_average(popup_view.findViewById(R.id.stat_list_2), main_activity.solve_times_2, main_activity.averages_2);
         }
-    }
-
-    private void set_average(GridLayout gl_avg_list, ArrayList<int[]> solve_times, float[] averages) {
-        int[] avg_num_list = {5, 12, 25, 50, 100};
-        String[] avg_str_list = {"avg5: ", "avg12: ", "avg25: ", "avg50: ", "avg100: "};
-
-        for (int i = 0; i < 5; i++) {
-            if (solve_times.size() >= avg_num_list[i]) {
-                TextView text_view_avg_1 = (TextView) gl_avg_list.getChildAt(i);
-                String new_avg_str;
-                if (averages[i] != 0) {
-                    new_avg_str = avg_str_list[i] + TimeButton.get_formatted_time(averages[i]);
-                } else {
-                    new_avg_str = avg_str_list[i] + "DNF";
-                }
-                text_view_avg_1.setText(new_avg_str);
-            }
-            else {
-                break;
-            }
-        }
-        TextView text_view_solve = (TextView) gl_avg_list.getChildAt(5);
-        int without_dnf_count = 0;
-        for (int[] solve: solve_times) {
-            if (solve[1] != 3) {
-                without_dnf_count += 1;
-            }
-        }
-
-        String solves_str = "solves: " + without_dnf_count + "/" + solve_times.size();
-        text_view_solve.setText(solves_str);
     }
 
     private void bind_penalty_button(LinearLayout layout, ArrayList<int[]> solve_times, TextView text_view_time, MainActivity main_activity) {

@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -22,6 +23,7 @@ public class TimeButton extends androidx.appcompat.widget.AppCompatButton {
     protected int curr_time;
     protected boolean is_processed = true;
     protected TextView text_view_time;
+    protected ArrayList<int[]> solve_times = new ArrayList<>();
     protected MainActivity main_activity;
 
     public TimeButton(Context context) {
@@ -90,6 +92,8 @@ public class TimeButton extends androidx.appcompat.widget.AppCompatButton {
             if (is_started) {
                 // if the timer was already started, it means that the timer should be stopped.
                 timer.cancel();
+                solve_times.add(new int[] {curr_time, 1});
+                main_activity.calculate_all_avg();
                 is_processed = false;
                 if (main_activity.isBothSolved()) {
                     main_activity.process_new_scramble();

@@ -8,7 +8,8 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
+import android.widget.GridLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.worldcubeassociation.tnoodle.scrambles.PuzzleRegistry;
@@ -18,7 +19,7 @@ import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity {
 
-    protected FrameLayout main_layout;
+    protected RelativeLayout main_layout;
     protected TimeButton btn_time_1, btn_time_2;
 
     protected String[] puzzle_properties = {"THREE", "23"};    // format: {<PUZZLE>, <FONT_SIZE>}
@@ -26,14 +27,15 @@ public class MainActivity extends AppCompatActivity {
     protected final ArrayList<int[]> solve_times_1 = new ArrayList<>();    // format: {<TIME>, <PENALTY_ID>}
     protected final ArrayList<int[]> solve_times_2 = new ArrayList<>();    // format: {<TIME>, <PENALTY_ID>}
 
-    protected final float[] averages_1 = {0, 0, 0, 0, 0};
-    protected final float[] averages_2 = {0, 0, 0, 0, 0};
+    protected float[] averages_1 = {0, 0, 0, 0, 0};
+    protected float[] averages_2 = {0, 0, 0, 0, 0};
+
+    private final boolean[] is_stats_shows = {false, false};
 
     private TextView textView_score_1, textView_score_2;
     private TextView textView_scramble_1, textView_scramble_2;
 
     private final ArrayList<String> scrambles = new ArrayList<>();
-
     private final ArrayList<Integer> wins_list = new ArrayList<>();    // list of winners for each solve
 
     @Override
@@ -55,12 +57,20 @@ public class MainActivity extends AppCompatActivity {
 
         btn_time_1.text_view_time = textView_time_1;
         btn_time_2.text_view_time = textView_time_2;
+        btn_time_1.solve_times = solve_times_1;
+        btn_time_2.solve_times = solve_times_2;
         btn_time_1.main_activity = this;
         btn_time_2.main_activity = this;
 
         Button btn_puzzles = findViewById(R.id.btn_puzzles);
         btn_puzzles.setOnClickListener(view -> {
             if (!btn_time_1.is_started && !btn_time_2.is_started) {
+                if (is_stats_shows[0]) {
+                    hide_stats(R.id.btn_stats_1, R.id.layout_stats_1, 0);
+                }
+                if (is_stats_shows[1]) {
+                    hide_stats(R.id.btn_stats_2, R.id.layout_stats_2, 1);
+                }
                 create_puzzle_popup_window();
             }
         });
@@ -68,28 +78,41 @@ public class MainActivity extends AppCompatActivity {
         Button btn_penalties = findViewById(R.id.btn_penalties);
         btn_penalties.setOnClickListener(view -> {
             if (btn_time_1.is_processed && btn_time_2.is_processed && !btn_time_1.is_started && !btn_time_2.is_started) {
+                if (is_stats_shows[0]) {
+                    hide_stats(R.id.btn_stats_1, R.id.layout_stats_1, 0);
+                }
+                if (is_stats_shows[1]) {
+                    hide_stats(R.id.btn_stats_2, R.id.layout_stats_2, 1);
+                }
                 create_penalty_popup_window();
             }
         });
 
-        Button btn_stats_1 = findViewById(R.id.stats_1);
+        Button btn_stats_1 = findViewById(R.id.btn_stats_1);
         btn_stats_1.setOnClickListener(view -> {
-            if (!btn_time_1.is_started && !btn_time_2.is_started) {
-                create_stats_popup_window();
+            if (!btn_time_1.is_started) {
+                show_stats(R.id.btn_stats_1, R.id.layout_stats_1, 0);
             }
         });
 
-        Button btn_stats_2 = findViewById(R.id.stats_2);
+        Button btn_stats_2 = findViewById(R.id.btn_stats_2);
         btn_stats_2.setOnClickListener(view -> {
-            if (!btn_time_1.is_started && !btn_time_2.is_started) {
-                create_stats_popup_window();
+            if (!btn_time_2.is_started) {
+                show_stats(R.id.btn_stats_2, R.id.layout_stats_2, 1);
             }
         });
+
+        Button btn_close_stats_1 = findViewById(R.id.btn_close_stats_1);
+        btn_close_stats_1.setOnClickListener(view -> hide_stats(R.id.btn_stats_1, R.id.layout_stats_1, 0));
+
+        Button btn_close_stats_2 = findViewById(R.id.btn_close_stats_2);
+        btn_close_stats_2.setOnClickListener(view -> hide_stats(R.id.btn_stats_2, R.id.layout_stats_2, 1));
     }
 
     private void create_penalty_popup_window() {
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupView = inflater.inflate(R.layout.popup_window_penalty, main_layout, false);
+
         new MyPopupWindow(popupView, this, R.layout.popup_window_penalty);
     }
 
@@ -100,11 +123,81 @@ public class MainActivity extends AppCompatActivity {
         new MyPopupWindow(popupView, this, R.layout.popup_window_puzzles);
     }
 
-    private void create_stats_popup_window() {
-        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(R.layout.popup_window_stats, main_layout, false);
+    private void show_stats(int btn_stats_id, int gl_stat_list_id, int stat_num) {
+        if (stat_num == 0) {
+            set_average(findViewById(R.id.stat_list_1), solve_times_1, averages_1);
+        } else {
+            set_average(findViewById(R.id.stat_list_2), solve_times_2, averages_2);
+        }
 
-        new MyPopupWindow(popupView, this, R.layout.popup_window_stats);
+        is_stats_shows[stat_num] = true;
+
+        Button btn_stat = findViewById(btn_stats_id);
+        btn_stat.setVisibility(View.GONE);
+
+        RelativeLayout gl_stat_list = findViewById(gl_stat_list_id);
+        gl_stat_list.setVisibility(View.VISIBLE);
+    }
+
+    private void hide_stats(int btn_stats_id, int gl_stat_list_id, int stat_num) {
+        is_stats_shows[stat_num] = false;
+
+        Button btn_stat = findViewById(btn_stats_id);
+        btn_stat.setVisibility(View.VISIBLE);
+
+        RelativeLayout gl_stat_list = findViewById(gl_stat_list_id);
+        gl_stat_list.setVisibility(View.GONE);
+    }
+
+    private void reset_averages() {
+        String[] avg_str_list = {"avg5: ", "avg12: ", "avg25: ", "avg50: ", "avg100: "};
+        GridLayout gl_stat_list_1 = (GridLayout) findViewById(R.id.stat_list_1);
+        GridLayout gl_stat_list_2 = (GridLayout) findViewById(R.id.stat_list_2);
+        TextView text_view_avg;
+        for (int i = 0; i < 5; i++) {
+            text_view_avg = (TextView) gl_stat_list_1.getChildAt(i);
+            text_view_avg.setText(avg_str_list[i]);
+
+            text_view_avg = (TextView) gl_stat_list_2.getChildAt(i);
+            text_view_avg.setText(avg_str_list[i]);
+        }
+        String solves = "solves: 0/0";
+        text_view_avg = (TextView) gl_stat_list_1.getChildAt(5);
+        text_view_avg.setText(solves);
+
+        text_view_avg = (TextView) gl_stat_list_2.getChildAt(5);
+        text_view_avg.setText(solves);
+    }
+
+    private void set_average(GridLayout gl_avg_list, ArrayList<int[]> solve_times, float[] averages) {
+        int[] avg_num_list = {5, 12, 25, 50, 100};
+        String[] avg_str_list = {"avg5: ", "avg12: ", "avg25: ", "avg50: ", "avg100: "};
+
+        for (int i = 0; i < 5; i++) {
+            if (solve_times.size() >= avg_num_list[i]) {
+                TextView text_view_avg_1 = (TextView) gl_avg_list.getChildAt(i);
+                String new_avg_str;
+                if (averages[i] != 0) {
+                    new_avg_str = avg_str_list[i] + TimeButton.get_formatted_time(averages[i]);
+                } else {
+                    new_avg_str = avg_str_list[i] + "DNF";
+                }
+                text_view_avg_1.setText(new_avg_str);
+            }
+            else {
+                break;
+            }
+        }
+        TextView text_view_solve = (TextView) gl_avg_list.getChildAt(5);
+        int without_dnf_count = 0;
+        for (int[] solve: solve_times) {
+            if (solve[1] != 3) {
+                without_dnf_count += 1;
+            }
+        }
+
+        String solves_str = "solves: " + without_dnf_count + "/" + solve_times.size();
+        text_view_solve.setText(solves_str);
     }
 
     protected void recalculate_score() {
@@ -183,9 +276,11 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < 5; i++) {
             if (solve_times_1.size() >= avg_num_list[i]) {
                 averages_1[i] = get_avg(new ArrayList<>(solve_times_1), avg_num_list[i], thrown_list[i]);
+            }
+            if (solve_times_2.size() >= avg_num_list[i]) {
                 averages_2[i] = get_avg(new ArrayList<>(solve_times_2), avg_num_list[i], thrown_list[i]);
             }
-            else {
+            if (solve_times_1.size() < avg_num_list[i] && solve_times_2.size() < avg_num_list[i]) {
                 break;
             }
         }
@@ -256,14 +351,21 @@ public class MainActivity extends AppCompatActivity {
     protected void reset_all() {
         // reset all stats
         scrambles.clear();
+        process_new_scramble();
+
         solve_times_1.clear();
         solve_times_2.clear();
-        process_new_scramble();
         wins_list.clear();
+
         btn_time_1.is_processed = true;
         btn_time_2.is_processed = true;
         btn_time_1.text_view_time.setText(getString(R.string.start_time));
         btn_time_2.text_view_time.setText(getString(R.string.start_time));
+
+        averages_1 = new float[] {0, 0, 0, 0, 0};
+        averages_2 = new float[] {0, 0, 0, 0, 0};
+        reset_averages();
+
         set_score(0, 0, 1, 1);
     }
 
@@ -278,16 +380,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void processTimes() {
-        int time1 = btn_time_1.curr_time;
-        int time2 = btn_time_2.curr_time;
-
-        solve_times_1.add(new int[] {time1, 1});
-        solve_times_2.add(new int[] {time2, 1});
-
-        set_score(time1, time2 ,1, 1);
+        set_score(btn_time_1.curr_time, btn_time_2.curr_time ,1, 1);
         btn_time_1.is_processed = true;
         btn_time_2.is_processed = true;
-        calculate_all_avg();
     }
 
     protected void process_new_scramble() {
