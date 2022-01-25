@@ -93,7 +93,7 @@ public class TimeButton extends androidx.appcompat.widget.AppCompatButton {
                 // if the timer was already started, it means that the timer should be stopped.
                 timer.cancel();
                 solve_times.add(new int[] {curr_time, 1});
-                main_activity.calculate_all_avg();
+                main_activity.calculate_and_set_averages();
                 is_processed = false;
                 if (main_activity.isBothSolved()) {
                     main_activity.process_new_scramble();

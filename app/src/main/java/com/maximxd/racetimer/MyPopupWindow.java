@@ -37,7 +37,7 @@ public class MyPopupWindow extends PopupWindow {
             final int id = i + 1;
             layout.getChildAt(i).setOnClickListener(view -> {
                 main_activity.set_penalty(solve_times, text_view_time, id);
-                main_activity.calculate_all_avg();
+                main_activity.calculate_and_set_averages();
                 main_activity.recalculate_score();
                 dismiss();
             });

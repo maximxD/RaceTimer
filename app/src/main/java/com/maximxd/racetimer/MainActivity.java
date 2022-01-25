@@ -30,8 +30,6 @@ public class MainActivity extends AppCompatActivity {
     protected float[] averages_1 = {0, 0, 0, 0, 0};
     protected float[] averages_2 = {0, 0, 0, 0, 0};
 
-    private final boolean[] is_stats_shows = {false, false};
-
     private TextView textView_score_1, textView_score_2;
     private TextView textView_scramble_1, textView_scramble_2;
 
@@ -46,8 +44,6 @@ public class MainActivity extends AppCompatActivity {
         main_layout = findViewById(R.id.main);
         btn_time_1 = findViewById(R.id.btn_time_1);
         btn_time_2 = findViewById(R.id.btn_time_2);
-        TextView textView_time_1 = findViewById(R.id.textView_time_1);
-        TextView textView_time_2 = findViewById(R.id.textView_time_2);
         textView_score_1 = findViewById(R.id.textView_score_1);
         textView_score_2 = findViewById(R.id.textView_score_2);
         textView_scramble_1 = findViewById(R.id.textView_scramble_1);
@@ -55,8 +51,8 @@ public class MainActivity extends AppCompatActivity {
 
         process_new_scramble();
 
-        btn_time_1.text_view_time = textView_time_1;
-        btn_time_2.text_view_time = textView_time_2;
+        btn_time_1.text_view_time = findViewById(R.id.textView_time_1);
+        btn_time_2.text_view_time = findViewById(R.id.textView_time_2);
         btn_time_1.solve_times = solve_times_1;
         btn_time_2.solve_times = solve_times_2;
         btn_time_1.main_activity = this;
@@ -65,12 +61,8 @@ public class MainActivity extends AppCompatActivity {
         Button btn_puzzles = findViewById(R.id.btn_puzzles);
         btn_puzzles.setOnClickListener(view -> {
             if (!btn_time_1.is_started && !btn_time_2.is_started) {
-                if (is_stats_shows[0]) {
-                    hide_stats(R.id.btn_stats_1, R.id.layout_stats_1, 0);
-                }
-                if (is_stats_shows[1]) {
-                    hide_stats(R.id.btn_stats_2, R.id.layout_stats_2, 1);
-                }
+                hide_stats(R.id.btn_stats_1, R.id.layout_stats_1);
+                hide_stats(R.id.btn_stats_2, R.id.layout_stats_2);
                 create_puzzle_popup_window();
             }
         });
@@ -78,12 +70,9 @@ public class MainActivity extends AppCompatActivity {
         Button btn_penalties = findViewById(R.id.btn_penalties);
         btn_penalties.setOnClickListener(view -> {
             if (btn_time_1.is_processed && btn_time_2.is_processed && !btn_time_1.is_started && !btn_time_2.is_started) {
-                if (is_stats_shows[0]) {
-                    hide_stats(R.id.btn_stats_1, R.id.layout_stats_1, 0);
-                }
-                if (is_stats_shows[1]) {
-                    hide_stats(R.id.btn_stats_2, R.id.layout_stats_2, 1);
-                }
+                hide_stats(R.id.btn_stats_1, R.id.layout_stats_1);
+                hide_stats(R.id.btn_stats_2, R.id.layout_stats_2);
+
                 create_penalty_popup_window();
             }
         });
@@ -91,22 +80,22 @@ public class MainActivity extends AppCompatActivity {
         Button btn_stats_1 = findViewById(R.id.btn_stats_1);
         btn_stats_1.setOnClickListener(view -> {
             if (!btn_time_1.is_started) {
-                show_stats(R.id.btn_stats_1, R.id.layout_stats_1, 0);
+                show_stats(R.id.btn_stats_1, R.id.layout_stats_1);
             }
         });
 
         Button btn_stats_2 = findViewById(R.id.btn_stats_2);
         btn_stats_2.setOnClickListener(view -> {
             if (!btn_time_2.is_started) {
-                show_stats(R.id.btn_stats_2, R.id.layout_stats_2, 1);
+                show_stats(R.id.btn_stats_2, R.id.layout_stats_2);
             }
         });
 
         Button btn_close_stats_1 = findViewById(R.id.btn_close_stats_1);
-        btn_close_stats_1.setOnClickListener(view -> hide_stats(R.id.btn_stats_1, R.id.layout_stats_1, 0));
+        btn_close_stats_1.setOnClickListener(view -> hide_stats(R.id.btn_stats_1, R.id.layout_stats_1));
 
         Button btn_close_stats_2 = findViewById(R.id.btn_close_stats_2);
-        btn_close_stats_2.setOnClickListener(view -> hide_stats(R.id.btn_stats_2, R.id.layout_stats_2, 1));
+        btn_close_stats_2.setOnClickListener(view -> hide_stats(R.id.btn_stats_2, R.id.layout_stats_2));
     }
 
     private void create_penalty_popup_window() {
@@ -123,15 +112,7 @@ public class MainActivity extends AppCompatActivity {
         new MyPopupWindow(popupView, this, R.layout.popup_window_puzzles);
     }
 
-    private void show_stats(int btn_stats_id, int gl_stat_list_id, int stat_num) {
-        if (stat_num == 0) {
-            set_average(findViewById(R.id.stat_list_1), solve_times_1, averages_1);
-        } else {
-            set_average(findViewById(R.id.stat_list_2), solve_times_2, averages_2);
-        }
-
-        is_stats_shows[stat_num] = true;
-
+    private void show_stats(int btn_stats_id, int gl_stat_list_id) {
         Button btn_stat = findViewById(btn_stats_id);
         btn_stat.setVisibility(View.GONE);
 
@@ -139,9 +120,7 @@ public class MainActivity extends AppCompatActivity {
         gl_stat_list.setVisibility(View.VISIBLE);
     }
 
-    private void hide_stats(int btn_stats_id, int gl_stat_list_id, int stat_num) {
-        is_stats_shows[stat_num] = false;
-
+    private void hide_stats(int btn_stats_id, int gl_stat_list_id) {
         Button btn_stat = findViewById(btn_stats_id);
         btn_stat.setVisibility(View.VISIBLE);
 
@@ -151,8 +130,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void reset_averages() {
         String[] avg_str_list = {"avg5: ", "avg12: ", "avg25: ", "avg50: ", "avg100: "};
-        GridLayout gl_stat_list_1 = (GridLayout) findViewById(R.id.stat_list_1);
-        GridLayout gl_stat_list_2 = (GridLayout) findViewById(R.id.stat_list_2);
+        GridLayout gl_stat_list_1 = findViewById(R.id.stat_list_1);
+        GridLayout gl_stat_list_2 = findViewById(R.id.stat_list_2);
         TextView text_view_avg;
         for (int i = 0; i < 5; i++) {
             text_view_avg = (TextView) gl_stat_list_1.getChildAt(i);
@@ -169,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
         text_view_avg.setText(solves);
     }
 
-    private void set_average(GridLayout gl_avg_list, ArrayList<int[]> solve_times, float[] averages) {
+    protected void set_average(GridLayout gl_avg_list, ArrayList<int[]> solve_times, float[] averages) {
         int[] avg_num_list = {5, 12, 25, 50, 100};
         String[] avg_str_list = {"avg5: ", "avg12: ", "avg25: ", "avg50: ", "avg100: "};
 
@@ -220,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
                     // if only cuber_2 got DNF, then cuber_1 won
                     wins_list.add(1);
                 } else {
-                    // both cubers got DNF, it is draw
+                    // both cubers got DNF, it is a draw
                     wins_list.add(0);
                 }
             } else if (time_1 < time_2) {
@@ -245,15 +224,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void set_penalty(ArrayList<int[]> solve_times, TextView textView, int penalty_id) {
-        // set penalty on current solve (OK -> penalty_id == 1, +2 -> penalty_id == 2, DNF -> penalty_id == 3)
+        // set penalty on current solve (penalty_id == 1 -> OK; penalty_id == 2 -> +2; penalty_id == 3 -> DNF)
         int number_of_solves = solve_times.size();
         if (number_of_solves > 0 && solve_times.get(number_of_solves - 1)[1] != penalty_id) {
             int curr_time = solve_times.get(number_of_solves - 1)[0];
             if (solve_times.get(number_of_solves - 1)[1] == 2) {
-                curr_time -= 2000;
+                curr_time -= 2000;    // -2 seconds
             }
             if (penalty_id == 2) {
-                curr_time += 2000;
+                curr_time += 2000;    // +2 seconds
             }
 
             solve_times.add(new int[] {curr_time, penalty_id});
@@ -270,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    protected void calculate_all_avg() {
+    protected void calculate_and_set_averages() {
         int[] avg_num_list = {5, 12, 25, 50, 100};
         int[] thrown_list = {1, 1, 2, 3, 5};
         for (int i = 0; i < 5; i++) {
@@ -284,6 +263,8 @@ public class MainActivity extends AppCompatActivity {
                 break;
             }
         }
+        set_average(findViewById(R.id.stat_list_1), solve_times_1, averages_1);
+        set_average(findViewById(R.id.stat_list_2), solve_times_2, averages_2);
     }
 
     private float get_avg(ArrayList<int[]> solve_times, int avg_of, int thrown) {
@@ -375,7 +356,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected boolean isBothSolved() {
-        // did both cubers solved cubes?
+        // did both cubers solve cubes?
         return !btn_time_1.is_processed && !btn_time_2.is_processed;
     }
 

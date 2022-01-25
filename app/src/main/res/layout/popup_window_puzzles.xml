@@ -16,7 +16,6 @@
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/invisible"
             android:columnCount="6"
             android:rowCount="4">
 
@@ -96,7 +95,6 @@
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/invisible"
             android:columnCount="2"
             android:rowCount="4">
             <Button
