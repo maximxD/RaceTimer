@@ -34,11 +34,14 @@ public class MainActivity extends AppCompatActivity {
 
     protected String[] puzzle_properties = {"THREE", "23"};    // format: {<PUZZLE>, <FONT_SIZE>}
 
-    protected final ArrayList<int[]> solve_times_1 = new ArrayList<>();    // format: {<TIME>, <PENALTY_ID>}
-    protected final ArrayList<int[]> solve_times_2 = new ArrayList<>();    // format: {<TIME>, <PENALTY_ID>}
+    protected final ArrayList<Integer> solve_times_1 = new ArrayList<>();
+    protected final ArrayList<Integer> solve_times_2 = new ArrayList<>();
 
-    protected float[] averages_1 = {0, 0, 0, 0, 0};
-    protected float[] averages_2 = {0, 0, 0, 0, 0};
+    protected final ArrayList<Integer> solve_penalties_1 = new ArrayList<>();
+    protected final ArrayList<Integer> solve_penalties_2 = new ArrayList<>();
+
+    protected double[] averages_1 = {0, 0, 0, 0, 0};
+    protected double[] averages_2 = {0, 0, 0, 0, 0};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,12 +66,16 @@ public class MainActivity extends AppCompatActivity {
         btn_time_2.text_view_time = findViewById(R.id.textView_time_2);
         btn_time_1.solve_times = solve_times_1;
         btn_time_2.solve_times = solve_times_2;
+        btn_time_1.solve_penalties = solve_penalties_1;
+        btn_time_2.solve_penalties = solve_penalties_2;
         btn_time_1.main_activity = this;
         btn_time_2.main_activity = this;
         btn_time_1.btn_stats = btn_stats_1;
         btn_time_1.layout_stats = layout_stats_1;
         btn_time_2.btn_stats = btn_stats_2;
         btn_time_2.layout_stats = layout_stats_2;
+        btn_time_1.averages = averages_1;
+        btn_time_2.averages = averages_2;
 
         Button btn_puzzles = findViewById(R.id.btn_puzzles);
         btn_puzzles.setOnClickListener(view -> {
@@ -91,12 +98,14 @@ public class MainActivity extends AppCompatActivity {
 
         btn_stats_1.setOnClickListener(view -> {
             if (!btn_time_1.is_started) {
+                set_average(findViewById(R.id.stat_list_1), solve_penalties_1, averages_1);
                 show_stats(btn_stats_1, layout_stats_1);
             }
         });
 
         btn_stats_2.setOnClickListener(view -> {
             if (!btn_time_2.is_started) {
+                set_average(findViewById(R.id.stat_list_2), solve_penalties_2, averages_2);
                 show_stats(btn_stats_2, layout_stats_2);
             }
         });
@@ -172,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
         text_view_avg.setText(solves);
     }
 
-    protected void set_average(GridLayout gl_avg_list, ArrayList<int[]> solve_times, float[] averages) {
+    protected void set_average(GridLayout gl_avg_list, ArrayList<Integer> solve_times, double[] averages) {
         int[] avg_num_list = {5, 12, 25, 50, 100};
         String[] avg_str_list = {"avg5: ", "avg12: ", "avg25: ", "avg50: ", "avg100: "};
 
@@ -193,8 +202,8 @@ public class MainActivity extends AppCompatActivity {
         }
         TextView text_view_solve = (TextView) gl_avg_list.getChildAt(5);
         int without_dnf_count = 0;
-        for (int[] solve: solve_times) {
-            if (solve[1] != 3) {
+        for (int solve: solve_times) {
+            if (solve != 3) {
                 without_dnf_count += 1;
             }
         }
@@ -207,8 +216,8 @@ public class MainActivity extends AppCompatActivity {
         if (wins_list.size() > 0) {
             wins_list.remove(wins_list.size() - 1);
 
-            set_score(solve_times_1.get(solve_times_1.size() - 1)[0], solve_times_2.get(solve_times_2.size() - 1)[0],
-                    solve_times_1.get(solve_times_1.size() - 1)[1], solve_times_2.get(solve_times_2.size() - 1)[1]);
+            set_score(solve_times_1.get(solve_times_1.size() - 1), solve_times_2.get(solve_times_2.size() - 1),
+                    solve_penalties_1.get(solve_penalties_1.size() - 1), solve_penalties_2.get(solve_penalties_2.size() - 1));
         }
     }
 
@@ -247,20 +256,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    protected void set_penalty(ArrayList<int[]> solve_times, TextView textView, int penalty_id) {
+    protected void set_penalty(ArrayList<Integer> solve_times, ArrayList<Integer> solve_penalties, TextView textView, int penalty_id) {
         // set penalty on current solve (penalty_id == 1 -> OK; penalty_id == 2 -> +2; penalty_id == 3 -> DNF)
         int number_of_solves = solve_times.size();
-        if (number_of_solves > 0 && solve_times.get(number_of_solves - 1)[1] != penalty_id) {
-            int curr_time = solve_times.get(number_of_solves - 1)[0];
-            if (solve_times.get(number_of_solves - 1)[1] == 2) {
+        if (number_of_solves > 0 && solve_penalties.get(number_of_solves - 1) != penalty_id) {
+            int curr_time = solve_times.get(number_of_solves - 1);
+            if (solve_penalties.get(number_of_solves - 1) == 2) {
                 curr_time -= 2000;    // -2 seconds
             }
             if (penalty_id == 2) {
                 curr_time += 2000;    // +2 seconds
             }
 
-            solve_times.add(new int[] {curr_time, penalty_id});
+            solve_times.add(curr_time);
+            solve_penalties.add(penalty_id);
             solve_times.remove(number_of_solves - 1);
+            solve_penalties.remove(number_of_solves - 1);
             String new_time_str;
             if (penalty_id == 1) {
                 new_time_str = TimeButton.get_formatted_time(curr_time);
@@ -273,28 +284,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    protected void calculate_and_set_averages() {
+    protected void calculate_average(ArrayList<Integer> solve_times, ArrayList<Integer> solve_penalties, double[] averages) {
         int[] avg_num_list = {5, 12, 25, 50, 100};
         int[] thrown_list = {1, 1, 2, 3, 5};
         for (int i = 0; i < 5; i++) {
-            if (solve_times_1.size() >= avg_num_list[i]) {
-                averages_1[i] = get_avg(new ArrayList<>(solve_times_1), avg_num_list[i], thrown_list[i]);
+            if (solve_times.size() >= avg_num_list[i]) {
+                averages[i] = get_avg(solve_times, solve_penalties, avg_num_list[i], thrown_list[i]);
             }
-            if (solve_times_2.size() >= avg_num_list[i]) {
-                averages_2[i] = get_avg(new ArrayList<>(solve_times_2), avg_num_list[i], thrown_list[i]);
-            }
-            if (solve_times_1.size() < avg_num_list[i] && solve_times_2.size() < avg_num_list[i]) {
+            else {
                 break;
             }
         }
-        set_average(findViewById(R.id.stat_list_1), solve_times_1, averages_1);
-        set_average(findViewById(R.id.stat_list_2), solve_times_2, averages_2);
     }
 
-    private float get_avg(ArrayList<int[]> solve_times, int avg_of, int thrown) {
+    private double get_avg(ArrayList<Integer> solve_times, ArrayList<Integer> solve_penalties, int avg_of, int thrown) {
         int number_of_solves = solve_times.size();
-        ArrayList<int[]> solve_times_need = new ArrayList<>(solve_times.subList(number_of_solves - avg_of, number_of_solves));
-        solve_times_need.removeIf(n -> (n[1] == 3));
+        ArrayList<Integer> solve_times_need = new ArrayList<>();
+        for (int i = number_of_solves - avg_of; i < number_of_solves; i++) {
+            // Add only non-dnf solves in solve_times_need
+            if (solve_penalties.get(i) != 3) {
+                solve_times_need.add(solve_times.get(i));
+            }
+        }
         if (solve_times_need.size() < avg_of - thrown) {
             return 0;
         } else {
@@ -303,26 +314,25 @@ public class MainActivity extends AppCompatActivity {
 
             solve_times_need.subList(0, thrown).clear();
 
-            while (solve_times_need.size() != avg_of - thrown*2) {
-                solve_times_need.remove(solve_times_need.size() - 1);
-            }
+            solve_times_need.subList(avg_of - thrown*2, solve_times_need.size()).clear();
 
             return get_mean(solve_times_need);
         }
     }
 
-    private float get_mean(ArrayList<int[]> solve_times) {
+    private double get_mean(ArrayList<Integer> solve_times) {
         int sum_times = 0;
         int count = 0;
 
-        for (int[] time: solve_times) {
-            sum_times += time[0] - time[0] % 10;
+        for (int time: solve_times) {
+            sum_times += time - time % 10;
             count += 1;
         }
-        return (float) (sum_times - sum_times % 10) / count;
+
+        return (double) (sum_times - sum_times % 10) / count;
     }
 
-    private static void sort_solve_times(ArrayList<int[]> solve_times, int low, int high) {
+    private static void sort_solve_times(ArrayList<Integer> solve_times, int low, int high) {
         if (solve_times.size() == 0) {
             return;
         }
@@ -330,14 +340,14 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         int middle = low + (high - low) / 2;
-        int[] main = solve_times.get(middle);
+        int main = solve_times.get(middle);
 
         int i = low, j = high;
         while (i <= j) {
-            while (solve_times.get(i)[0] < main[0]) {
+            while (solve_times.get(i) < main) {
                 i++;
             }
-            while (solve_times.get(j)[0] > main[0]) {
+            while (solve_times.get(j) > main) {
                 j--;
             }
             if (i <= j) {
@@ -360,6 +370,9 @@ public class MainActivity extends AppCompatActivity {
 
         solve_times_1.clear();
         solve_times_2.clear();
+        solve_penalties_1.clear();
+        solve_penalties_2.clear();
+
         wins_list.clear();
 
         btn_time_1.is_processed = true;
@@ -367,8 +380,10 @@ public class MainActivity extends AppCompatActivity {
         btn_time_1.text_view_time.setText(getString(R.string.start_time));
         btn_time_2.text_view_time.setText(getString(R.string.start_time));
 
-        averages_1 = new float[] {0, 0, 0, 0, 0};
-        averages_2 = new float[] {0, 0, 0, 0, 0};
+        for (int i = 0; i < 5; i++) {
+            averages_1[i] = 0;
+            averages_2[i] = 0;
+        }
         reset_averages();
 
         set_score(0, 0, 1, 1);

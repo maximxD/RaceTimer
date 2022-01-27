@@ -30,7 +30,9 @@ public class TimeButton extends androidx.appcompat.widget.AppCompatButton {
     protected LinearLayout layout_stats;
 
     protected TextView text_view_time;
-    protected ArrayList<int[]> solve_times = new ArrayList<>();
+    protected ArrayList<Integer> solve_times = new ArrayList<>();
+    protected ArrayList<Integer> solve_penalties = new ArrayList<>();
+    protected double[] averages;
     protected MainActivity main_activity;
 
     public TimeButton(Context context) {
@@ -61,9 +63,10 @@ public class TimeButton extends androidx.appcompat.widget.AppCompatButton {
         return str_time;
     }
 
-    public static String get_formatted_time(float time) {
+    public static String get_formatted_time(double time) {
         String str_time;
         time /= 1000;
+
         if (time < 60) {
             str_time = String.format(Locale.US, "%.2f", time);
         } else {
@@ -101,8 +104,9 @@ public class TimeButton extends androidx.appcompat.widget.AppCompatButton {
             if (is_started) {
                 // if the timer was already started, it means that the timer should be stopped.
                 timer.cancel();
-                solve_times.add(new int[] {curr_time, 1});
-                main_activity.calculate_and_set_averages();
+                solve_times.add(curr_time);
+                solve_penalties.add(1);
+                main_activity.calculate_average(solve_times, solve_penalties, averages);
                 is_processed = false;
                 if (main_activity.isBothSolved()) {
                     main_activity.process_new_scramble();

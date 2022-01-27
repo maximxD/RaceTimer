@@ -26,18 +26,21 @@ public class MyPopupWindow extends PopupWindow {
             bind_change_puzzle_buttons(popup_view, main_activity);
         } else {
             bind_penalty_button(popup_view.findViewById(R.id.penalty_layout_1), main_activity.solve_times_1,
-                    main_activity.btn_time_1.text_view_time, main_activity);
+                    main_activity.solve_penalties_1, main_activity.btn_time_1.text_view_time, main_activity.averages_1,
+                    main_activity);
             bind_penalty_button(popup_view.findViewById(R.id.penalty_layout_2), main_activity.solve_times_2,
-                    main_activity.btn_time_2.text_view_time, main_activity);
+                    main_activity.solve_penalties_2, main_activity.btn_time_2.text_view_time, main_activity.averages_2,
+                    main_activity);
         }
     }
 
-    private void bind_penalty_button(LinearLayout layout, ArrayList<int[]> solve_times, TextView text_view_time, MainActivity main_activity) {
+    private void bind_penalty_button(LinearLayout layout, ArrayList<Integer> solve_times, ArrayList<Integer> solve_penalties,
+                                     TextView text_view_time, double[] averages, MainActivity main_activity) {
         for (int i = 0; i < 3; i++) {
             final int id = i + 1;
             layout.getChildAt(i).setOnClickListener(view -> {
-                main_activity.set_penalty(solve_times, text_view_time, id);
-                main_activity.calculate_and_set_averages();
+                main_activity.set_penalty(solve_times, solve_penalties, text_view_time, id);
+                main_activity.calculate_average(solve_times, solve_penalties, averages);
                 main_activity.recalculate_score();
                 dismiss();
             });
