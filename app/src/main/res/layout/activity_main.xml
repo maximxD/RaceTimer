@@ -41,6 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="@string/start_time"
+                android:textStyle="bold"
                 android:paddingBottom="40dp"
                 android:textSize="50sp"
                 android:gravity="center"/>
@@ -74,6 +75,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="@string/start_time"
+                android:textStyle="bold"
                 android:paddingBottom="40dp"
                 android:textSize="50sp"
                 android:gravity="center"/>
@@ -145,29 +147,33 @@
         android:textSize="22sp"
         android:rotation="180"/>
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/layout_stats_1"
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_above="@id/dividing_line"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/half_rounded_layout_shape"
+        android:rotation="180"
         android:visibility="gone">
 
         <Button
-            android:id="@+id/btn_close_stats_1"
+            android:id="@+id/btn_scrambles_1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/invisible"/>
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/scrambles"
+            android:textSize="20sp"
+            android:background="@drawable/rounded_btn_shape"/>
 
         <GridLayout
             android:id="@+id/stat_list_1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@drawable/half_rounded_layout_shape"
             android:columnCount="2"
             android:rowCount="3"
-            android:padding="20dp"
-            android:rotation="180">
+            android:padding="20dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -217,12 +223,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
+                android:text="@string/solves"
                 android:layout_columnWeight="1"
                 android:layout_gravity="fill"/>
 
         </GridLayout>
 
-    </RelativeLayout>
+    </LinearLayout>
 
     <Button
         android:id="@+id/btn_stats_2"
@@ -233,29 +240,33 @@
         android:textSize="22sp"
         android:layout_alignParentBottom="true"/>
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/layout_stats_2"
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_below="@id/dividing_line"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:background="@drawable/half_rounded_layout_shape"
         android:visibility="gone">
 
         <Button
-            android:id="@+id/btn_close_stats_2"
+            android:id="@+id/btn_scrambles_2"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/invisible"/>
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/scrambles"
+            android:textSize="20sp"
+            android:background="@drawable/rounded_btn_shape"/>
 
         <GridLayout
             android:id="@+id/stat_list_2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@drawable/half_rounded_layout_shape"
             android:columnCount="2"
             android:rowCount="3"
-            android:padding="20dp"
-            android:layout_alignParentBottom="true">
+            android:padding="20dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -304,11 +315,12 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:textSize="20sp"
+                android:text="@string/solves"
                 android:layout_columnWeight="1"
                 android:layout_gravity="fill"/>
 
         </GridLayout>
 
-    </RelativeLayout>
+    </LinearLayout>
 
 </RelativeLayout>

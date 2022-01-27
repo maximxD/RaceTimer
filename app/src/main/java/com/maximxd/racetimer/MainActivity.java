@@ -3,12 +3,14 @@ package com.maximxd.racetimer;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.text.HtmlCompat;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -18,6 +20,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity {
+
+    private TextView textView_score_1, textView_score_2;
+    private TextView textView_scramble_1, textView_scramble_2;
+    private Button btn_stats_1, btn_stats_2;
+    private LinearLayout layout_stats_1, layout_stats_2;
+
+    private final ArrayList<String> scrambles = new ArrayList<>();
+    private final ArrayList<Integer> wins_list = new ArrayList<>();    // list of winners for each solve
 
     protected RelativeLayout main_layout;
     protected TimeButton btn_time_1, btn_time_2;
@@ -29,12 +39,6 @@ public class MainActivity extends AppCompatActivity {
 
     protected float[] averages_1 = {0, 0, 0, 0, 0};
     protected float[] averages_2 = {0, 0, 0, 0, 0};
-
-    private TextView textView_score_1, textView_score_2;
-    private TextView textView_scramble_1, textView_scramble_2;
-
-    private final ArrayList<String> scrambles = new ArrayList<>();
-    private final ArrayList<Integer> wins_list = new ArrayList<>();    // list of winners for each solve
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +52,10 @@ public class MainActivity extends AppCompatActivity {
         textView_score_2 = findViewById(R.id.textView_score_2);
         textView_scramble_1 = findViewById(R.id.textView_scramble_1);
         textView_scramble_2 = findViewById(R.id.textView_scramble_2);
+        btn_stats_1 = findViewById(R.id.btn_stats_1);
+        btn_stats_2 = findViewById(R.id.btn_stats_2);
+        layout_stats_1 = findViewById(R.id.layout_stats_1);
+        layout_stats_2 = findViewById(R.id.layout_stats_2);
 
         process_new_scramble();
 
@@ -57,12 +65,16 @@ public class MainActivity extends AppCompatActivity {
         btn_time_2.solve_times = solve_times_2;
         btn_time_1.main_activity = this;
         btn_time_2.main_activity = this;
+        btn_time_1.btn_stats = btn_stats_1;
+        btn_time_1.layout_stats = layout_stats_1;
+        btn_time_2.btn_stats = btn_stats_2;
+        btn_time_2.layout_stats = layout_stats_2;
 
         Button btn_puzzles = findViewById(R.id.btn_puzzles);
         btn_puzzles.setOnClickListener(view -> {
             if (!btn_time_1.is_started && !btn_time_2.is_started) {
-                hide_stats(R.id.btn_stats_1, R.id.layout_stats_1);
-                hide_stats(R.id.btn_stats_2, R.id.layout_stats_2);
+                hide_stats(btn_stats_1, layout_stats_1);
+                hide_stats(btn_stats_2, layout_stats_2);
                 create_puzzle_popup_window();
             }
         });
@@ -70,32 +82,48 @@ public class MainActivity extends AppCompatActivity {
         Button btn_penalties = findViewById(R.id.btn_penalties);
         btn_penalties.setOnClickListener(view -> {
             if (btn_time_1.is_processed && btn_time_2.is_processed && !btn_time_1.is_started && !btn_time_2.is_started) {
-                hide_stats(R.id.btn_stats_1, R.id.layout_stats_1);
-                hide_stats(R.id.btn_stats_2, R.id.layout_stats_2);
+                hide_stats(btn_stats_1, layout_stats_1);
+                hide_stats(btn_stats_2, layout_stats_2);
 
                 create_penalty_popup_window();
             }
         });
 
-        Button btn_stats_1 = findViewById(R.id.btn_stats_1);
         btn_stats_1.setOnClickListener(view -> {
             if (!btn_time_1.is_started) {
-                show_stats(R.id.btn_stats_1, R.id.layout_stats_1);
+                show_stats(btn_stats_1, layout_stats_1);
             }
         });
 
-        Button btn_stats_2 = findViewById(R.id.btn_stats_2);
         btn_stats_2.setOnClickListener(view -> {
             if (!btn_time_2.is_started) {
-                show_stats(R.id.btn_stats_2, R.id.layout_stats_2);
+                show_stats(btn_stats_2, layout_stats_2);
             }
         });
 
-        Button btn_close_stats_1 = findViewById(R.id.btn_close_stats_1);
-        btn_close_stats_1.setOnClickListener(view -> hide_stats(R.id.btn_stats_1, R.id.layout_stats_1));
+        Button btn_scrambles_1 = findViewById(R.id.btn_scrambles_1);
+        btn_scrambles_1.setOnClickListener(view -> {
+            if (!btn_time_2.is_started && btn_time_1.is_processed && btn_time_2.is_processed) {
+                Intent intent = new Intent(this, ScramblesList.class);
+                intent.putExtra("scrambles", new ArrayList<>(scrambles.subList(0, solve_times_1.size())));
+                intent.putExtra("font_size", puzzle_properties[1]);
+                startActivity(intent);
+                hide_stats(btn_stats_1, layout_stats_1);
+                hide_stats(btn_stats_2, layout_stats_2);
+            }
+        });
 
-        Button btn_close_stats_2 = findViewById(R.id.btn_close_stats_2);
-        btn_close_stats_2.setOnClickListener(view -> hide_stats(R.id.btn_stats_2, R.id.layout_stats_2));
+        Button btn_scrambles_2 = findViewById(R.id.btn_scrambles_2);
+        btn_scrambles_2.setOnClickListener(view -> {
+            if (!btn_time_1.is_started && btn_time_1.is_processed && btn_time_2.is_processed) {
+                Intent intent = new Intent(this, ScramblesList.class);
+                intent.putExtra("scrambles", new ArrayList<>(scrambles.subList(0, solve_times_2.size())));
+                intent.putExtra("font_size", puzzle_properties[1]);
+                startActivity(intent);
+                hide_stats(btn_stats_1, layout_stats_1);
+                hide_stats(btn_stats_2, layout_stats_2);
+            }
+        });
     }
 
     private void create_penalty_popup_window() {
@@ -112,20 +140,16 @@ public class MainActivity extends AppCompatActivity {
         new MyPopupWindow(popupView, this, R.layout.popup_window_puzzles);
     }
 
-    private void show_stats(int btn_stats_id, int gl_stat_list_id) {
-        Button btn_stat = findViewById(btn_stats_id);
-        btn_stat.setVisibility(View.GONE);
+    private void show_stats(Button btn_stats, LinearLayout layout_stats) {
+        layout_stats.setVisibility(View.VISIBLE);
 
-        RelativeLayout gl_stat_list = findViewById(gl_stat_list_id);
-        gl_stat_list.setVisibility(View.VISIBLE);
+        btn_stats.setVisibility(View.GONE);
     }
 
-    private void hide_stats(int btn_stats_id, int gl_stat_list_id) {
-        Button btn_stat = findViewById(btn_stats_id);
-        btn_stat.setVisibility(View.VISIBLE);
+    protected void hide_stats(Button btn_stats, LinearLayout layout_stats) {
+        layout_stats.setVisibility(View.GONE);
 
-        RelativeLayout gl_stat_list = findViewById(gl_stat_list_id);
-        gl_stat_list.setVisibility(View.GONE);
+        btn_stats.setVisibility(View.VISIBLE);
     }
 
     private void reset_averages() {

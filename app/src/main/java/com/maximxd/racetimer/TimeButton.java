@@ -4,6 +4,9 @@ import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -19,9 +22,13 @@ public class TimeButton extends androidx.appcompat.widget.AppCompatButton {
     private Timer timer;
     private int pressed_counter = 0;    // need to get right delay before start
     private final int default_color = this.getCurrentTextColor();
+
     protected boolean is_started = false;
     protected int curr_time;
     protected boolean is_processed = true;
+    protected Button btn_stats;
+    protected LinearLayout layout_stats;
+
     protected TextView text_view_time;
     protected ArrayList<int[]> solve_times = new ArrayList<>();
     protected MainActivity main_activity;
@@ -87,7 +94,9 @@ public class TimeButton extends androidx.appcompat.widget.AppCompatButton {
     }
 
     private void on_press_timer() {
-        if (is_processed) {
+        if (layout_stats.getVisibility() == View.VISIBLE) {
+            main_activity.hide_stats(btn_stats, layout_stats);
+        } else if (is_processed) {
             // if times were already processed (both cubers solved cubes), allow to start/stop the timer.
             if (is_started) {
                 // if the timer was already started, it means that the timer should be stopped.
