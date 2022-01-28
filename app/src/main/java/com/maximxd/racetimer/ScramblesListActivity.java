@@ -47,8 +47,8 @@ public class ScramblesListActivity extends AppCompatActivity {
 
     private ArrayList<String> get_string_times(ArrayList<Integer> solve_times, ArrayList<Integer> solve_penalties) {
         ArrayList<String> strings_times = new ArrayList<>();
+        String string_time;
         for (int i = 0; i < solve_times.size(); i++) {
-            String string_time;
             if (solve_penalties.get(i) != 3) {
                 string_time = TimeButton.get_formatted_time(solve_times.get(i));
                 if (solve_penalties.get(i) == 2) {
@@ -77,13 +77,14 @@ public class ScramblesListActivity extends AppCompatActivity {
         ArrayList<String> string_times = get_string_times(solve_times, solve_penalties);
         List<HashMap<String, String>> hash_map_solves = get_hash_map_solves(scrambles, string_times);
         SimpleAdapter adapter = new SimpleAdapter(this, hash_map_solves, R.layout.scramble_text_view,
-                new String[]{"scramble", "time"}, new int[]{R.id.text_view_scramble, R.id.text_view_time}) {
+                                                  new String[]{"scramble", "time"},
+                                                  new int[]{R.id.text_view_scramble, R.id.text_view_time}) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent){
                 LinearLayout layout = (LinearLayout) super.getView(position, convertView, parent);
 
                 TextView tv = (TextView) layout.getChildAt(0);
-                String new_text = (position + 1) + ". " + tv.getText().toString();
+                String new_text = (position + 1) + ") " + tv.getText().toString();
                 tv.setText(new_text);
 
                 tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, font_size);

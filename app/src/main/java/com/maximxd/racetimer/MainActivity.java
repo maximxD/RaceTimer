@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
             if (!btn_time_1.is_started && !btn_time_2.is_started) {
                 hide_stats(btn_stats_1, layout_stats_1);
                 hide_stats(btn_stats_2, layout_stats_2);
+
                 create_puzzle_popup_window();
             }
         });
@@ -110,37 +111,32 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button btn_scrambles_1 = findViewById(R.id.btn_scrambles_1);
-        btn_scrambles_1.setOnClickListener(view -> {
+        Button btn_solves_1 = findViewById(R.id.btn_scrambles_1);
+        btn_solves_1.setOnClickListener(view -> {
             if (!btn_time_2.is_started && btn_time_1.is_processed && btn_time_2.is_processed) {
-                Intent intent = new Intent(this, ScramblesListActivity.class);
-                intent.putExtra("scrambles", new ArrayList<>(scrambles.subList(0, solve_times_1.size())));
-                intent.putExtra("font_size", Integer.parseInt(puzzle_properties[1]));
-                intent.putExtra("solve_times_1", solve_times_1);
-                intent.putExtra("solve_times_2", solve_times_2);
-                intent.putExtra("solve_penalties_1", solve_penalties_1);
-                intent.putExtra("solve_penalties_2", solve_penalties_2);
-                startActivity(intent);
-                hide_stats(btn_stats_1, layout_stats_1);
-                hide_stats(btn_stats_2, layout_stats_2);
+                go_to_solve_list_activity();
             }
         });
 
-        Button btn_scrambles_2 = findViewById(R.id.btn_scrambles_2);
-        btn_scrambles_2.setOnClickListener(view -> {
+        Button btn_solves_2 = findViewById(R.id.btn_scrambles_2);
+        btn_solves_2.setOnClickListener(view -> {
             if (!btn_time_1.is_started && btn_time_1.is_processed && btn_time_2.is_processed) {
-                Intent intent = new Intent(this, ScramblesListActivity.class);
-                intent.putExtra("scrambles", new ArrayList<>(scrambles.subList(0, solve_times_2.size())));
-                intent.putExtra("font_size", Integer.parseInt(puzzle_properties[1]));
-                intent.putExtra("solve_times_1", solve_times_1);
-                intent.putExtra("solve_times_2", solve_times_2);
-                intent.putExtra("solve_penalties_1", solve_penalties_1);
-                intent.putExtra("solve_penalties_2", solve_penalties_2);
-                startActivity(intent);
-                hide_stats(btn_stats_1, layout_stats_1);
-                hide_stats(btn_stats_2, layout_stats_2);
+                go_to_solve_list_activity();
             }
         });
+    }
+
+    private void go_to_solve_list_activity() {
+        Intent intent = new Intent(this, ScramblesListActivity.class);
+        intent.putExtra("scrambles", new ArrayList<>(scrambles.subList(0, solve_times_1.size())));
+        intent.putExtra("font_size", Integer.parseInt(puzzle_properties[1]));
+        intent.putExtra("solve_times_1", solve_times_1);
+        intent.putExtra("solve_times_2", solve_times_2);
+        intent.putExtra("solve_penalties_1", solve_penalties_1);
+        intent.putExtra("solve_penalties_2", solve_penalties_2);
+        startActivity(intent);
+        hide_stats(btn_stats_1, layout_stats_1);
+        hide_stats(btn_stats_2, layout_stats_2);
     }
 
     private void create_penalty_popup_window() {
@@ -193,22 +189,25 @@ public class MainActivity extends AppCompatActivity {
         int[] avg_num_list = {5, 12, 25, 50, 100};
         String[] avg_str_list = {"avg5: ", "avg12: ", "avg25: ", "avg50: ", "avg100: "};
 
+        TextView text_view_stats;
+        String new_stats_str;
         for (int i = 0; i < 5; i++) {
             if (solve_times.size() >= avg_num_list[i]) {
-                TextView text_view_avg_1 = (TextView) gl_avg_list.getChildAt(i);
-                String new_avg_str;
-                if (averages[i] != 0) {
-                    new_avg_str = avg_str_list[i] + TimeButton.get_formatted_time(averages[i]);
+                // if number of solves enough to set this average
+                text_view_stats = (TextView) gl_avg_list.getChildAt(i);
+                if (averages[i] == 0) {
+                    // if average == 0 -> DNF
+                    new_stats_str = avg_str_list[i] + "DNF";
                 } else {
-                    new_avg_str = avg_str_list[i] + "DNF";
+                    new_stats_str = avg_str_list[i] + TimeButton.get_formatted_time(averages[i]);
                 }
-                text_view_avg_1.setText(new_avg_str);
+                text_view_stats.setText(new_stats_str);
             }
             else {
                 break;
             }
         }
-        TextView text_view_solve = (TextView) gl_avg_list.getChildAt(5);
+        text_view_stats = (TextView) gl_avg_list.getChildAt(5);
         int without_dnf_count = 0;
         for (int solve: solve_times) {
             if (solve != 3) {
@@ -216,8 +215,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        String solves_str = "solves: " + without_dnf_count + "/" + solve_times.size();
-        text_view_solve.setText(solves_str);
+        new_stats_str = "solves: " + without_dnf_count + "/" + solve_times.size();
+        text_view_stats.setText(new_stats_str);
     }
 
     protected void recalculate_score() {
@@ -265,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void set_penalty(ArrayList<Integer> solve_times, ArrayList<Integer> solve_penalties, TextView textView, int penalty_id) {
-        // set penalty on current solve (penalty_id == 1 -> OK; penalty_id == 2 -> +2; penalty_id == 3 -> DNF)
+        // set penalty on last solve (penalty_id == 1 -> OK; penalty_id == 2 -> +2; penalty_id == 3 -> DNF)
         int number_of_solves = solve_times.size();
         if (number_of_solves > 0 && solve_penalties.get(number_of_solves - 1) != penalty_id) {
             int curr_time = solve_times.get(number_of_solves - 1);
@@ -276,10 +275,10 @@ public class MainActivity extends AppCompatActivity {
                 curr_time += 2000;    // +2 seconds
             }
 
-            solve_times.add(curr_time);
-            solve_penalties.add(penalty_id);
             solve_times.remove(number_of_solves - 1);
             solve_penalties.remove(number_of_solves - 1);
+            solve_times.add(curr_time);
+            solve_penalties.add(penalty_id);
             String new_time_str;
             if (penalty_id == 1) {
                 new_time_str = TimeButton.get_formatted_time(curr_time);
@@ -307,7 +306,7 @@ public class MainActivity extends AppCompatActivity {
 
     private double get_avg(ArrayList<Integer> solve_times, ArrayList<Integer> solve_penalties, int avg_of, int thrown) {
         int number_of_solves = solve_times.size();
-        ArrayList<Integer> solve_times_need = new ArrayList<>();
+        ArrayList<Integer> solve_times_need = new ArrayList<>();    // last <avg_of> solves
         for (int i = number_of_solves - avg_of; i < number_of_solves; i++) {
             // Add only non-dnf solves in solve_times_need
             if (solve_penalties.get(i) != 3) {
@@ -320,8 +319,10 @@ public class MainActivity extends AppCompatActivity {
             // sort times to make average counting easier
             sort_solve_times(solve_times_need, 0, solve_times_need.size() - 1);
 
+            // throw a given number of best solves
             solve_times_need.subList(0, thrown).clear();
 
+            // throw a given number of worst solves
             solve_times_need.subList(avg_of - thrown*2, solve_times_need.size()).clear();
 
             return get_mean(solve_times_need);

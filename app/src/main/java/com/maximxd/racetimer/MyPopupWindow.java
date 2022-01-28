@@ -10,7 +10,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class MyPopupWindow extends PopupWindow {
 
@@ -70,7 +69,7 @@ public class MyPopupWindow extends PopupWindow {
     }
 
     private void change_puzzle(Map<Integer, String[]> PUZZLES_DICT, Button button, MainActivity main_activity) {
-        main_activity.puzzle_properties = Objects.requireNonNull(PUZZLES_DICT.get(button.getId()));
+        main_activity.puzzle_properties = PUZZLES_DICT.get(button.getId());
     }
 
     private Map<Integer, String[]> get_id_to_puzzle_dict(int[] BUTTONS_IDS){
