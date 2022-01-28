@@ -162,7 +162,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
             android:layout_marginTop="20dp"
-            android:text="@string/scrambles"
+            android:text="@string/solves"
             android:textSize="20sp"
             android:background="@drawable/rounded_btn_shape"/>
 
@@ -223,7 +223,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
-                android:text="@string/solves"
+                android:text="@string/solves_stats"
                 android:layout_columnWeight="1"
                 android:layout_gravity="fill"/>
 
@@ -255,7 +255,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
             android:layout_marginTop="20dp"
-            android:text="@string/scrambles"
+            android:text="@string/solves"
             android:textSize="20sp"
             android:background="@drawable/rounded_btn_shape"/>
 
@@ -315,7 +315,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:textSize="20sp"
-                android:text="@string/solves"
+                android:text="@string/solves_stats"
                 android:layout_columnWeight="1"
                 android:layout_gravity="fill"/>
 

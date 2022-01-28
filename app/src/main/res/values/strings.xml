@@ -24,7 +24,7 @@
     <string name="avg50">avg50:</string>
     <string name="avg100">avg100:</string>
     <string name="stats">STATS</string>
-    <string name="solves">solves: 0/0</string>
-    <string name="scrambles">SCRAMBLES</string>
+    <string name="solves_stats">solves: 0/0</string>
+    <string name="solves">SOLVES</string>
     <string name="back_to_timer">TIMER</string>
 </resources>

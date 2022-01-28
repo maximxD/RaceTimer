@@ -113,9 +113,13 @@ public class MainActivity extends AppCompatActivity {
         Button btn_scrambles_1 = findViewById(R.id.btn_scrambles_1);
         btn_scrambles_1.setOnClickListener(view -> {
             if (!btn_time_2.is_started && btn_time_1.is_processed && btn_time_2.is_processed) {
-                Intent intent = new Intent(this, ScramblesList.class);
+                Intent intent = new Intent(this, ScramblesListActivity.class);
                 intent.putExtra("scrambles", new ArrayList<>(scrambles.subList(0, solve_times_1.size())));
-                intent.putExtra("font_size", puzzle_properties[1]);
+                intent.putExtra("font_size", Integer.parseInt(puzzle_properties[1]));
+                intent.putExtra("solve_times_1", solve_times_1);
+                intent.putExtra("solve_times_2", solve_times_2);
+                intent.putExtra("solve_penalties_1", solve_penalties_1);
+                intent.putExtra("solve_penalties_2", solve_penalties_2);
                 startActivity(intent);
                 hide_stats(btn_stats_1, layout_stats_1);
                 hide_stats(btn_stats_2, layout_stats_2);
@@ -125,9 +129,13 @@ public class MainActivity extends AppCompatActivity {
         Button btn_scrambles_2 = findViewById(R.id.btn_scrambles_2);
         btn_scrambles_2.setOnClickListener(view -> {
             if (!btn_time_1.is_started && btn_time_1.is_processed && btn_time_2.is_processed) {
-                Intent intent = new Intent(this, ScramblesList.class);
+                Intent intent = new Intent(this, ScramblesListActivity.class);
                 intent.putExtra("scrambles", new ArrayList<>(scrambles.subList(0, solve_times_2.size())));
-                intent.putExtra("font_size", puzzle_properties[1]);
+                intent.putExtra("font_size", Integer.parseInt(puzzle_properties[1]));
+                intent.putExtra("solve_times_1", solve_times_1);
+                intent.putExtra("solve_times_2", solve_times_2);
+                intent.putExtra("solve_penalties_1", solve_penalties_1);
+                intent.putExtra("solve_penalties_2", solve_penalties_2);
                 startActivity(intent);
                 hide_stats(btn_stats_1, layout_stats_1);
                 hide_stats(btn_stats_2, layout_stats_2);

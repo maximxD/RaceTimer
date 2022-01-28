@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RaceTimer">
         <activity
-            android:name=".ScramblesList"
+            android:name=".ScramblesListActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

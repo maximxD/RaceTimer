@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ScramblesList">
+    tools:context=".ScramblesListActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -12,12 +12,18 @@
         android:layout_above="@+id/dividing_line_scrambles"
         android:rotation="180">
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_below="@+id/text_view_scrambles_1"
+            android:background="?attr/colorOnSecondary"/>
+
         <TextView
             android:id="@+id/text_view_scrambles_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="7dp"
-            android:text="@string/scrambles"
+            android:text="@string/solves"
             android:textStyle="bold"
             android:layout_centerHorizontal="true"
             android:textAlignment="center"
@@ -57,16 +63,22 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/dividing_line_scrambles">
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_below="@+id/text_view_scrambles_2"
+            android:background="?attr/colorOnSecondary"/>
+
         <TextView
             android:id="@+id/text_view_scrambles_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:padding="7dp"
-            android:text="@string/scrambles"
-            android:textStyle="bold"
+            android:text="@string/solves"
             android:textAlignment="center"
-            android:textSize="25sp" />
+            android:textSize="25sp"
+            android:textStyle="bold" />
 
         <ListView
             android:id="@+id/list_view_scrambles_2"
