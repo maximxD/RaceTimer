@@ -21,7 +21,7 @@
             android:rotation="180">
 
             <TextView
-                android:id="@+id/textView_score_1"
+                android:id="@+id/textViewScore1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="35sp"
@@ -29,7 +29,7 @@
                 android:textAlignment="center"/>
 
             <TextView
-                android:id="@+id/textView_scramble_1"
+                android:id="@+id/textViewScramble1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="17sp"
@@ -37,7 +37,7 @@
                 android:textSize="20sp"/>
 
             <TextView
-                android:id="@+id/textView_time_1"
+                android:id="@+id/textViewTime1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="@string/start_time"
@@ -55,7 +55,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/textView_score_2"
+                android:id="@+id/textViewScore2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="35sp"
@@ -63,7 +63,7 @@
                 android:textAlignment="center"/>
 
             <TextView
-                android:id="@+id/textView_scramble_2"
+                android:id="@+id/textViewScramble2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="17sp"
@@ -71,7 +71,7 @@
                 android:textSize="20sp"/>
 
             <TextView
-                android:id="@+id/textView_time_2"
+                android:id="@+id/textViewTime2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:text="@string/start_time"
@@ -90,14 +90,14 @@
         android:orientation="vertical">
 
         <com.maximxd.racetimer.TimeButton
-            android:id="@+id/btn_time_1"
+            android:id="@+id/btnTime1"
             android:layout_width="match_parent"
             android:layout_height="0sp"
             android:layout_weight="1"
             android:background="@color/invisible"/>
 
         <com.maximxd.racetimer.TimeButton
-            android:id="@+id/btn_time_2"
+            android:id="@+id/btnTime2"
             android:layout_width="match_parent"
             android:layout_height="0sp"
             android:layout_weight="1"
@@ -106,14 +106,14 @@
     </LinearLayout>
 
     <View
-        android:id="@+id/dividing_line"
+        android:id="@+id/dividingLine"
         android:layout_width="match_parent"
         android:layout_height="5dp"
         android:layout_centerVertical="true"
         android:background="?attr/colorOnSecondary"/>
 
     <Button
-        android:id="@+id/btn_puzzles"
+        android:id="@+id/btnPuzzles"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
@@ -124,7 +124,7 @@
         android:textSize="22sp" />
 
     <Button
-        android:id="@+id/btn_penalties"
+        android:id="@+id/btnPenalties"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/penalty"
@@ -137,7 +137,7 @@
         tools:ignore="RelativeOverlap" />
 
     <Button
-        android:id="@+id/btn_stats_1"
+        android:id="@+id/btnStats1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/half_rounded_layout_shape"
@@ -146,7 +146,7 @@
         android:rotation="180"/>
 
     <LinearLayout
-        android:id="@+id/layout_stats_1"
+        android:id="@+id/layoutStats1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -155,7 +155,7 @@
         android:visibility="gone">
 
         <Button
-            android:id="@+id/btn_scrambles_1"
+            android:id="@+id/btnScrambles1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
@@ -165,7 +165,7 @@
             android:background="@drawable/rounded_btn_shape"/>
 
         <GridLayout
-            android:id="@+id/stat_list_1"
+            android:id="@+id/statList1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -230,7 +230,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/btn_stats_2"
+        android:id="@+id/btnStats2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/half_rounded_layout_shape"
@@ -239,7 +239,7 @@
         android:layout_alignParentBottom="true"/>
 
     <LinearLayout
-        android:id="@+id/layout_stats_2"
+        android:id="@+id/layoutStats2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -248,7 +248,7 @@
         android:visibility="gone">
 
         <Button
-            android:id="@+id/btn_scrambles_2"
+            android:id="@+id/btnScrambles2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
@@ -258,7 +258,7 @@
             android:background="@drawable/rounded_btn_shape"/>
 
         <GridLayout
-            android:id="@+id/stat_list_2"
+            android:id="@+id/statList2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"

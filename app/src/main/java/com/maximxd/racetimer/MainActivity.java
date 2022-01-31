@@ -21,282 +21,282 @@ import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView textView_score_1, textView_score_2;
-    private TextView textView_scramble_1, textView_scramble_2;
-    private Button btn_stats_1, btn_stats_2;
-    private LinearLayout layout_stats_1, layout_stats_2;
+    private TextView textViewScore1, textViewScore2;
+    private TextView textViewScramble1, textViewScramble2;
+    private Button btnStats1, btnStats2;
+    private LinearLayout layoutStats1, layoutStats2;
 
     private final ArrayList<String> scrambles = new ArrayList<>();
-    private final ArrayList<Integer> wins_list = new ArrayList<>();    // list of winners for each solve
+    private final ArrayList<Integer> winsList = new ArrayList<>();    // list of winners for each solve
 
-    protected RelativeLayout main_layout;
-    protected TimeButton btn_time_1, btn_time_2;
+    protected RelativeLayout mainLayout;
+    protected TimeButton btnTime1, btnTime2;
 
-    protected String[] puzzle_properties = {"THREE", "23"};    // format: {<PUZZLE>, <FONT_SIZE>}
+    protected String[] puzzleProperties = {"THREE", "23"};    // format: {<PUZZLE>, <FONT_SIZE>}
 
-    protected final ArrayList<Integer> solve_times_1 = new ArrayList<>();
-    protected final ArrayList<Integer> solve_times_2 = new ArrayList<>();
+    protected final ArrayList<Integer> solveTimes1 = new ArrayList<>();
+    protected final ArrayList<Integer> solveTimes2 = new ArrayList<>();
 
-    protected final ArrayList<Integer> solve_penalties_1 = new ArrayList<>();
-    protected final ArrayList<Integer> solve_penalties_2 = new ArrayList<>();
+    protected final ArrayList<Integer> solvePenalties1 = new ArrayList<>();
+    protected final ArrayList<Integer> solvePenalties2 = new ArrayList<>();
 
-    protected double[] averages_1 = {0, 0, 0, 0, 0};
-    protected double[] averages_2 = {0, 0, 0, 0, 0};
+    protected double[] averages1 = {0, 0, 0, 0, 0};
+    protected double[] averages2 = {0, 0, 0, 0, 0};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        main_layout = findViewById(R.id.main);
-        btn_time_1 = findViewById(R.id.btn_time_1);
-        btn_time_2 = findViewById(R.id.btn_time_2);
-        textView_score_1 = findViewById(R.id.textView_score_1);
-        textView_score_2 = findViewById(R.id.textView_score_2);
-        textView_scramble_1 = findViewById(R.id.textView_scramble_1);
-        textView_scramble_2 = findViewById(R.id.textView_scramble_2);
-        btn_stats_1 = findViewById(R.id.btn_stats_1);
-        btn_stats_2 = findViewById(R.id.btn_stats_2);
-        layout_stats_1 = findViewById(R.id.layout_stats_1);
-        layout_stats_2 = findViewById(R.id.layout_stats_2);
+        mainLayout = findViewById(R.id.main);
+        btnTime1 = findViewById(R.id.btnTime1);
+        btnTime2 = findViewById(R.id.btnTime2);
+        textViewScore1 = findViewById(R.id.textViewScore1);
+        textViewScore2 = findViewById(R.id.textViewScore2);
+        textViewScramble1 = findViewById(R.id.textViewScramble1);
+        textViewScramble2 = findViewById(R.id.textViewScramble2);
+        btnStats1 = findViewById(R.id.btnStats1);
+        btnStats2 = findViewById(R.id.btnStats2);
+        layoutStats1 = findViewById(R.id.layoutStats1);
+        layoutStats2 = findViewById(R.id.layoutStats2);
 
-        process_new_scramble();
+        processNewScramble();
 
-        btn_time_1.text_view_time = findViewById(R.id.textView_time_1);
-        btn_time_2.text_view_time = findViewById(R.id.textView_time_2);
-        btn_time_1.solve_times = solve_times_1;
-        btn_time_2.solve_times = solve_times_2;
-        btn_time_1.solve_penalties = solve_penalties_1;
-        btn_time_2.solve_penalties = solve_penalties_2;
-        btn_time_1.main_activity = this;
-        btn_time_2.main_activity = this;
-        btn_time_1.btn_stats = btn_stats_1;
-        btn_time_1.layout_stats = layout_stats_1;
-        btn_time_2.btn_stats = btn_stats_2;
-        btn_time_2.layout_stats = layout_stats_2;
-        btn_time_1.averages = averages_1;
-        btn_time_2.averages = averages_2;
+        btnTime1.textViewTime = findViewById(R.id.textViewTime1);
+        btnTime2.textViewTime = findViewById(R.id.textViewTime2);
+        btnTime1.solveTimes = solveTimes1;
+        btnTime2.solveTimes = solveTimes2;
+        btnTime1.solvePenalties = solvePenalties1;
+        btnTime2.solvePenalties = solvePenalties2;
+        btnTime1.mainActivity = this;
+        btnTime2.mainActivity = this;
+        btnTime1.btnStats = btnStats1;
+        btnTime1.layoutStats = layoutStats1;
+        btnTime2.btnStats = btnStats2;
+        btnTime2.layoutStats = layoutStats2;
+        btnTime1.averages = averages1;
+        btnTime2.averages = averages2;
 
-        Button btn_puzzles = findViewById(R.id.btn_puzzles);
-        btn_puzzles.setOnClickListener(view -> {
-            if (!btn_time_1.is_started && !btn_time_2.is_started) {
-                hide_stats(btn_stats_1, layout_stats_1);
-                hide_stats(btn_stats_2, layout_stats_2);
+        Button btnPuzzles = findViewById(R.id.btnPuzzles);
+        btnPuzzles.setOnClickListener(view -> {
+            if (!btnTime1.isStarted && !btnTime2.isStarted) {
+                hideStats(btnStats1, layoutStats1);
+                hideStats(btnStats2, layoutStats2);
 
-                create_puzzle_popup_window();
+                createPuzzlePopupWindow();
             }
         });
 
-        Button btn_penalties = findViewById(R.id.btn_penalties);
-        btn_penalties.setOnClickListener(view -> {
-            if (btn_time_1.is_processed && btn_time_2.is_processed && !btn_time_1.is_started && !btn_time_2.is_started) {
-                hide_stats(btn_stats_1, layout_stats_1);
-                hide_stats(btn_stats_2, layout_stats_2);
+        Button btnPenalties = findViewById(R.id.btnPenalties);
+        btnPenalties.setOnClickListener(view -> {
+            if (btnTime1.isProcessed && btnTime2.isProcessed && !btnTime1.isStarted && !btnTime2.isStarted) {
+                hideStats(btnStats1, layoutStats1);
+                hideStats(btnStats2, layoutStats2);
 
-                create_penalty_popup_window();
+                createPenaltyPopupWindow();
             }
         });
 
-        btn_stats_1.setOnClickListener(view -> {
-            if (!btn_time_1.is_started) {
-                set_average(findViewById(R.id.stat_list_1), solve_penalties_1, averages_1);
-                show_stats(btn_stats_1, layout_stats_1);
+        btnStats1.setOnClickListener(view -> {
+            if (!btnTime1.isStarted) {
+                setAverage(findViewById(R.id.statList1), solvePenalties1, averages1);
+                showStats(btnStats1, layoutStats1);
             }
         });
 
-        btn_stats_2.setOnClickListener(view -> {
-            if (!btn_time_2.is_started) {
-                set_average(findViewById(R.id.stat_list_2), solve_penalties_2, averages_2);
-                show_stats(btn_stats_2, layout_stats_2);
+        btnStats2.setOnClickListener(view -> {
+            if (!btnTime2.isStarted) {
+                setAverage(findViewById(R.id.statList2), solvePenalties2, averages2);
+                showStats(btnStats2, layoutStats2);
             }
         });
 
-        Button btn_solves_1 = findViewById(R.id.btn_scrambles_1);
-        btn_solves_1.setOnClickListener(view -> {
-            if (!btn_time_2.is_started && btn_time_1.is_processed && btn_time_2.is_processed) {
-                go_to_solve_list_activity();
+        Button btnSolves1 = findViewById(R.id.btnScrambles1);
+        btnSolves1.setOnClickListener(view -> {
+            if (!btnTime2.isStarted && btnTime1.isProcessed && btnTime2.isProcessed) {
+                goToSolveListActivity();
             }
         });
 
-        Button btn_solves_2 = findViewById(R.id.btn_scrambles_2);
-        btn_solves_2.setOnClickListener(view -> {
-            if (!btn_time_1.is_started && btn_time_1.is_processed && btn_time_2.is_processed) {
-                go_to_solve_list_activity();
+        Button btnSolves2 = findViewById(R.id.btnScrambles2);
+        btnSolves2.setOnClickListener(view -> {
+            if (!btnTime1.isStarted && btnTime1.isProcessed && btnTime2.isProcessed) {
+                goToSolveListActivity();
             }
         });
     }
 
-    private void go_to_solve_list_activity() {
+    private void goToSolveListActivity() {
         Intent intent = new Intent(this, ScramblesListActivity.class);
-        intent.putExtra("scrambles", new ArrayList<>(scrambles.subList(0, solve_times_1.size())));
-        intent.putExtra("font_size", Integer.parseInt(puzzle_properties[1]));
-        intent.putExtra("solve_times_1", solve_times_1);
-        intent.putExtra("solve_times_2", solve_times_2);
-        intent.putExtra("solve_penalties_1", solve_penalties_1);
-        intent.putExtra("solve_penalties_2", solve_penalties_2);
+        intent.putExtra("scrambles", new ArrayList<>(scrambles.subList(0, solveTimes1.size())));
+        intent.putExtra("fontSize", Integer.parseInt(puzzleProperties[1]));
+        intent.putExtra("solveTimes1", solveTimes1);
+        intent.putExtra("solveTimes2", solveTimes2);
+        intent.putExtra("solvePenalties1", solvePenalties1);
+        intent.putExtra("solvePenalties2", solvePenalties2);
         startActivity(intent);
-        hide_stats(btn_stats_1, layout_stats_1);
-        hide_stats(btn_stats_2, layout_stats_2);
+        hideStats(btnStats1, layoutStats1);
+        hideStats(btnStats2, layoutStats2);
     }
 
-    private void create_penalty_popup_window() {
+    private void createPenaltyPopupWindow() {
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(R.layout.popup_window_penalty, main_layout, false);
+        View popupView = inflater.inflate(R.layout.popup_window_penalty, mainLayout, false);
 
         new MyPopupWindow(popupView, this, R.layout.popup_window_penalty);
     }
 
-    private void create_puzzle_popup_window() {
+    private void createPuzzlePopupWindow() {
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View popupView = inflater.inflate(R.layout.popup_window_puzzles, main_layout, false);
+        View popupView = inflater.inflate(R.layout.popup_window_puzzles, mainLayout, false);
 
         new MyPopupWindow(popupView, this, R.layout.popup_window_puzzles);
     }
 
-    private void show_stats(Button btn_stats, LinearLayout layout_stats) {
-        layout_stats.setVisibility(View.VISIBLE);
+    private void showStats(Button btnStats, LinearLayout layoutStats) {
+        layoutStats.setVisibility(View.VISIBLE);
 
-        btn_stats.setVisibility(View.GONE);
+        btnStats.setVisibility(View.GONE);
     }
 
-    protected void hide_stats(Button btn_stats, LinearLayout layout_stats) {
-        layout_stats.setVisibility(View.GONE);
+    protected void hideStats(Button btnStats, LinearLayout layoutStats) {
+        layoutStats.setVisibility(View.GONE);
 
-        btn_stats.setVisibility(View.VISIBLE);
+        btnStats.setVisibility(View.VISIBLE);
     }
 
-    private void reset_averages() {
-        String[] avg_str_list = {"avg5: ", "avg12: ", "avg25: ", "avg50: ", "avg100: "};
-        GridLayout gl_stat_list_1 = findViewById(R.id.stat_list_1);
-        GridLayout gl_stat_list_2 = findViewById(R.id.stat_list_2);
-        TextView text_view_avg;
+    private void resetAverages() {
+        String[] avgStrList = {"avg5: ", "avg12: ", "avg25: ", "avg50: ", "avg100: "};
+        GridLayout glStatList1 = findViewById(R.id.statList1);
+        GridLayout glStatList2 = findViewById(R.id.statList2);
+        TextView textViewAvg;
         for (int i = 0; i < 5; i++) {
-            text_view_avg = (TextView) gl_stat_list_1.getChildAt(i);
-            text_view_avg.setText(avg_str_list[i]);
+            textViewAvg = (TextView) glStatList1.getChildAt(i);
+            textViewAvg.setText(avgStrList[i]);
 
-            text_view_avg = (TextView) gl_stat_list_2.getChildAt(i);
-            text_view_avg.setText(avg_str_list[i]);
+            textViewAvg = (TextView) glStatList2.getChildAt(i);
+            textViewAvg.setText(avgStrList[i]);
         }
         String solves = "solves: 0/0";
-        text_view_avg = (TextView) gl_stat_list_1.getChildAt(5);
-        text_view_avg.setText(solves);
+        textViewAvg = (TextView) glStatList1.getChildAt(5);
+        textViewAvg.setText(solves);
 
-        text_view_avg = (TextView) gl_stat_list_2.getChildAt(5);
-        text_view_avg.setText(solves);
+        textViewAvg = (TextView) glStatList2.getChildAt(5);
+        textViewAvg.setText(solves);
     }
 
-    protected void set_average(GridLayout gl_avg_list, ArrayList<Integer> solve_times, double[] averages) {
-        int[] avg_num_list = {5, 12, 25, 50, 100};
-        String[] avg_str_list = {"avg5: ", "avg12: ", "avg25: ", "avg50: ", "avg100: "};
+    private void setAverage(GridLayout glAvgList, ArrayList<Integer> solveTimes, double[] averages) {
+        int[] avgNumList = {5, 12, 25, 50, 100};
+        String[] avgStrList = {"avg5: ", "avg12: ", "avg25: ", "avg50: ", "avg100: "};
 
-        TextView text_view_stats;
-        String new_stats_str;
+        TextView textViewStats;
+        String newStatsStr;
         for (int i = 0; i < 5; i++) {
-            if (solve_times.size() >= avg_num_list[i]) {
+            if (solveTimes.size() >= avgNumList[i]) {
                 // if number of solves enough to set this average
-                text_view_stats = (TextView) gl_avg_list.getChildAt(i);
+                textViewStats = (TextView) glAvgList.getChildAt(i);
                 if (averages[i] == 0) {
                     // if average == 0 -> DNF
-                    new_stats_str = avg_str_list[i] + "DNF";
+                    newStatsStr = avgStrList[i] + "DNF";
                 } else {
-                    new_stats_str = avg_str_list[i] + TimeButton.get_formatted_time(averages[i]);
+                    newStatsStr = avgStrList[i] + TimeButton.getFormattedTime(averages[i]);
                 }
-                text_view_stats.setText(new_stats_str);
+                textViewStats.setText(newStatsStr);
             }
             else {
                 break;
             }
         }
-        text_view_stats = (TextView) gl_avg_list.getChildAt(5);
-        int without_dnf_count = 0;
-        for (int solve: solve_times) {
+        textViewStats = (TextView) glAvgList.getChildAt(5);
+        int withoutDnfCount = 0;
+        for (int solve: solveTimes) {
             if (solve != 3) {
-                without_dnf_count += 1;
+                withoutDnfCount += 1;
             }
         }
 
-        new_stats_str = "solves: " + without_dnf_count + "/" + solve_times.size();
-        text_view_stats.setText(new_stats_str);
+        newStatsStr = "solves: " + withoutDnfCount + "/" + solveTimes.size();
+        textViewStats.setText(newStatsStr);
     }
 
-    protected void recalculate_score() {
-        if (wins_list.size() > 0) {
-            wins_list.remove(wins_list.size() - 1);
+    protected void recalculateScore() {
+        if (winsList.size() > 0) {
+            winsList.remove(winsList.size() - 1);
 
-            set_score(solve_times_1.get(solve_times_1.size() - 1), solve_times_2.get(solve_times_2.size() - 1),
-                    solve_penalties_1.get(solve_penalties_1.size() - 1), solve_penalties_2.get(solve_penalties_2.size() - 1));
+            setScore(solveTimes1.get(solveTimes1.size() - 1), solveTimes2.get(solveTimes2.size() - 1),
+                    solvePenalties1.get(solvePenalties1.size() - 1), solvePenalties2.get(solvePenalties2.size() - 1));
         }
     }
 
-    private void set_score(float time_1, float time_2, float penalty_id_1, float penalty_id_2) {
-        if (solve_times_1.size() > 0) {
-            if (penalty_id_1 == 3 || penalty_id_2 == 3) {
+    private void setScore(int time1, int time2, int penaltyId1, int penaltyId2) {
+        if (solveTimes1.size() > 0) {
+            if (penaltyId1 == 3 || penaltyId2 == 3) {
                 // if any cuber got DNF
-                if (penalty_id_1 == 3 && penalty_id_2 != 3) {
-                    // if only cuber_1 got DNF, then cuber_2 won
-                    wins_list.add(2);
-                } else if (penalty_id_1 != 3) {
-                    // if only cuber_2 got DNF, then cuber_1 won
-                    wins_list.add(1);
+                if (penaltyId1 == 3 && penaltyId2 != 3) {
+                    // if only cuber1 got DNF, then cuber2 won
+                    winsList.add(2);
+                } else if (penaltyId1 != 3) {
+                    // if only cuber2 got DNF, then cuber1 won
+                    winsList.add(1);
                 } else {
                     // both cubers got DNF, it is a draw
-                    wins_list.add(0);
+                    winsList.add(0);
                 }
-            } else if (time_1 < time_2) {
-                wins_list.add(1);
-            } else if (time_1 > time_2) {
-                wins_list.add(2);
+            } else if (time1 < time2) {
+                winsList.add(1);
+            } else if (time1 > time2) {
+                winsList.add(2);
             } else {
-                wins_list.add(0);
+                winsList.add(0);
             }
-            textView_score_1.setText(HtmlCompat.fromHtml(get_score_html_string(
-                                     Collections.frequency(wins_list, 1),
-                                     Collections.frequency(wins_list, 2)),
+            textViewScore1.setText(HtmlCompat.fromHtml(getScoreHtmlString(
+                                     Collections.frequency(winsList, 1),
+                                     Collections.frequency(winsList, 2)),
                                      HtmlCompat.FROM_HTML_MODE_LEGACY));
-            textView_score_2.setText(HtmlCompat.fromHtml(get_score_html_string(
-                                     Collections.frequency(wins_list, 2),
-                                     Collections.frequency(wins_list, 1)),
+            textViewScore2.setText(HtmlCompat.fromHtml(getScoreHtmlString(
+                                     Collections.frequency(winsList, 2),
+                                     Collections.frequency(winsList, 1)),
                                      HtmlCompat.FROM_HTML_MODE_LEGACY));
         } else {
-            textView_score_1.setText(HtmlCompat.fromHtml(get_score_html_string(0, 0), HtmlCompat.FROM_HTML_MODE_LEGACY));
-            textView_score_2.setText(HtmlCompat.fromHtml(get_score_html_string(0, 0), HtmlCompat.FROM_HTML_MODE_LEGACY));
+            textViewScore1.setText(HtmlCompat.fromHtml(getScoreHtmlString(0, 0), HtmlCompat.FROM_HTML_MODE_LEGACY));
+            textViewScore2.setText(HtmlCompat.fromHtml(getScoreHtmlString(0, 0), HtmlCompat.FROM_HTML_MODE_LEGACY));
         }
     }
 
-    protected void set_penalty(ArrayList<Integer> solve_times, ArrayList<Integer> solve_penalties, TextView textView, int penalty_id) {
-        // set penalty on last solve (penalty_id == 1 -> OK; penalty_id == 2 -> +2; penalty_id == 3 -> DNF)
-        int number_of_solves = solve_times.size();
-        if (number_of_solves > 0 && solve_penalties.get(number_of_solves - 1) != penalty_id) {
-            int curr_time = solve_times.get(number_of_solves - 1);
-            if (solve_penalties.get(number_of_solves - 1) == 2) {
-                curr_time -= 2000;    // -2 seconds
+    protected void setPenalty(ArrayList<Integer> solveTimes, ArrayList<Integer> solvePenalties, TextView textView, int penaltyId) {
+        // set penalty on last solve (penaltyId == 1 -> OK; penaltyId == 2 -> +2; penaltyId == 3 -> DNF)
+        int numberOfSolves = solveTimes.size();
+        if (numberOfSolves > 0 && solvePenalties.get(numberOfSolves - 1) != penaltyId) {
+            int currTime = solveTimes.get(numberOfSolves - 1);
+            if (solvePenalties.get(numberOfSolves - 1) == 2) {
+                currTime -= 2000;    // -2 seconds
             }
-            if (penalty_id == 2) {
-                curr_time += 2000;    // +2 seconds
+            if (penaltyId == 2) {
+                currTime += 2000;    // +2 seconds
             }
 
-            solve_times.remove(number_of_solves - 1);
-            solve_penalties.remove(number_of_solves - 1);
-            solve_times.add(curr_time);
-            solve_penalties.add(penalty_id);
-            String new_time_str;
-            if (penalty_id == 1) {
-                new_time_str = TimeButton.get_formatted_time(curr_time);
-            } else if (penalty_id == 2) {
-                new_time_str = TimeButton.get_formatted_time(curr_time) + "+";
+            solveTimes.remove(numberOfSolves - 1);
+            solvePenalties.remove(numberOfSolves - 1);
+            solveTimes.add(currTime);
+            solvePenalties.add(penaltyId);
+            String newTimeStr;
+            if (penaltyId == 1) {
+                newTimeStr = TimeButton.getFormattedTime(currTime);
+            } else if (penaltyId == 2) {
+                newTimeStr = TimeButton.getFormattedTime(currTime) + "+";
             } else {
-                new_time_str = getString(R.string.dnf);
+                newTimeStr = getString(R.string.dnf);
             }
-            textView.setText(new_time_str);
+            textView.setText(newTimeStr);
         }
     }
 
-    protected void calculate_average(ArrayList<Integer> solve_times, ArrayList<Integer> solve_penalties, double[] averages) {
-        int[] avg_num_list = {5, 12, 25, 50, 100};
-        int[] thrown_list = {1, 1, 2, 3, 5};
+    protected void calculateAverage(ArrayList<Integer> solveTimes, ArrayList<Integer> solvePenalties, double[] averages) {
+        int[] avgNumList = {5, 12, 25, 50, 100};
+        int[] thrownList = {1, 1, 2, 3, 5};
         for (int i = 0; i < 5; i++) {
-            if (solve_times.size() >= avg_num_list[i]) {
-                averages[i] = get_avg(solve_times, solve_penalties, avg_num_list[i], thrown_list[i]);
+            if (solveTimes.size() >= avgNumList[i]) {
+                averages[i] = getAvg(solveTimes, solvePenalties, avgNumList[i], thrownList[i]);
             }
             else {
                 break;
@@ -304,146 +304,146 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private double get_avg(ArrayList<Integer> solve_times, ArrayList<Integer> solve_penalties, int avg_of, int thrown) {
-        int number_of_solves = solve_times.size();
-        ArrayList<Integer> solve_times_need = new ArrayList<>();    // last <avg_of> solves
-        for (int i = number_of_solves - avg_of; i < number_of_solves; i++) {
-            // Add only non-dnf solves in solve_times_need
-            if (solve_penalties.get(i) != 3) {
-                solve_times_need.add(solve_times.get(i));
+    private double getAvg(ArrayList<Integer> solveTimes, ArrayList<Integer> solvePenalties, int avgOf, int thrown) {
+        int numberOfSolves = solveTimes.size();
+        ArrayList<Integer> solveTimesNeed = new ArrayList<>();    // last <avgOf> solves
+        for (int i = numberOfSolves - avgOf; i < numberOfSolves; i++) {
+            // Add only non-dnf solves in solveTimesNeed
+            if (solvePenalties.get(i) != 3) {
+                solveTimesNeed.add(solveTimes.get(i));
             }
         }
-        if (solve_times_need.size() < avg_of - thrown) {
+        if (solveTimesNeed.size() < avgOf - thrown) {
             return 0;
         } else {
             // sort times to make average counting easier
-            sort_solve_times(solve_times_need, 0, solve_times_need.size() - 1);
+            sortSolveTimes(solveTimesNeed, 0, solveTimesNeed.size() - 1);
 
             // throw a given number of best solves
-            solve_times_need.subList(0, thrown).clear();
+            solveTimesNeed.subList(0, thrown).clear();
 
             // throw a given number of worst solves
-            solve_times_need.subList(avg_of - thrown*2, solve_times_need.size()).clear();
+            solveTimesNeed.subList(avgOf - thrown*2, solveTimesNeed.size()).clear();
 
-            return get_mean(solve_times_need);
+            return getMean(solveTimesNeed);
         }
     }
 
-    private double get_mean(ArrayList<Integer> solve_times) {
-        int sum_times = 0;
+    private double getMean(ArrayList<Integer> solveTimes) {
+        int sumTimes = 0;
         int count = 0;
 
-        for (int time: solve_times) {
-            sum_times += time - time % 10;
+        for (int time: solveTimes) {
+            sumTimes += time - time % 10;
             count += 1;
         }
 
-        return (double) (sum_times - sum_times % 10) / count;
+        return (double) (sumTimes - sumTimes % 10) / count;
     }
 
-    private static void sort_solve_times(ArrayList<Integer> solve_times, int low, int high) {
-        if (solve_times.size() == 0) {
+    private static void sortSolveTimes(ArrayList<Integer> solveTimes, int low, int high) {
+        if (solveTimes.size() == 0) {
             return;
         }
         if (low >= high) {
             return;
         }
         int middle = low + (high - low) / 2;
-        int main = solve_times.get(middle);
+        int main = solveTimes.get(middle);
 
         int i = low, j = high;
         while (i <= j) {
-            while (solve_times.get(i) < main) {
+            while (solveTimes.get(i) < main) {
                 i++;
             }
-            while (solve_times.get(j) > main) {
+            while (solveTimes.get(j) > main) {
                 j--;
             }
             if (i <= j) {
-                Collections.swap(solve_times, i, j);
+                Collections.swap(solveTimes, i, j);
                 i++;
                 j--;
             }
         }
 
         if (low < j)
-            sort_solve_times(solve_times, low, j);
+            sortSolveTimes(solveTimes, low, j);
         if (high > i)
-            sort_solve_times(solve_times, i, high);
+            sortSolveTimes(solveTimes, i, high);
     }
 
-    protected void reset_all() {
+    protected void resetAll() {
         // reset all stats
         scrambles.clear();
-        process_new_scramble();
+        processNewScramble();
 
-        solve_times_1.clear();
-        solve_times_2.clear();
-        solve_penalties_1.clear();
-        solve_penalties_2.clear();
+        solveTimes1.clear();
+        solveTimes2.clear();
+        solvePenalties1.clear();
+        solvePenalties2.clear();
 
-        wins_list.clear();
+        winsList.clear();
 
-        btn_time_1.is_processed = true;
-        btn_time_2.is_processed = true;
-        btn_time_1.text_view_time.setText(getString(R.string.start_time));
-        btn_time_2.text_view_time.setText(getString(R.string.start_time));
+        btnTime1.isProcessed = true;
+        btnTime2.isProcessed = true;
+        btnTime1.textViewTime.setText(getString(R.string.start_time));
+        btnTime2.textViewTime.setText(getString(R.string.start_time));
 
         for (int i = 0; i < 5; i++) {
-            averages_1[i] = 0;
-            averages_2[i] = 0;
+            averages1[i] = 0;
+            averages2[i] = 0;
         }
-        reset_averages();
+        resetAverages();
 
-        set_score(0, 0, 1, 1);
+        setScore(0, 0, 1, 1);
     }
 
-    private void set_scramble_font_size(int font_size) {
-        textView_scramble_1.setTextSize(TypedValue.COMPLEX_UNIT_SP, font_size);
-        textView_scramble_2.setTextSize(TypedValue.COMPLEX_UNIT_SP, font_size);
+    private void setScrambleFontSize(int fontSize) {
+        textViewScramble1.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize);
+        textViewScramble2.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize);
     }
 
     protected boolean isBothSolved() {
         // did both cubers solve cubes?
-        return !btn_time_1.is_processed && !btn_time_2.is_processed;
+        return !btnTime1.isProcessed && !btnTime2.isProcessed;
     }
 
     protected void processTimes() {
-        set_score(btn_time_1.curr_time, btn_time_2.curr_time ,1, 1);
-        btn_time_1.is_processed = true;
-        btn_time_2.is_processed = true;
+        setScore(btnTime1.currTime, btnTime2.currTime,1, 1);
+        btnTime1.isProcessed = true;
+        btnTime2.isProcessed = true;
     }
 
-    protected void process_new_scramble() {
+    protected void processNewScramble() {
         // generate and set new scramble in another thread
         Thread thread = new Thread(() -> {
             if (scrambles.isEmpty()) {
                 // if scramble list is empty, generate first scramble
                 runOnUiThread(() -> {
                     // set text "Generating scramble..."
-                    set_scramble_font_size(25);
-                    set_new_scramble(getString(R.string.generating_scramble));
+                    setScrambleFontSize(25);
+                    setNewScramble(getString(R.string.generating_scramble));
                 });
                 // generate and add new scramble to scramble list
-                scrambles.add(PuzzleRegistry.valueOf(puzzle_properties[0]).getScrambler().generateScrambles(1)[0]);
+                scrambles.add(PuzzleRegistry.valueOf(puzzleProperties[0]).getScrambler().generateScrambles(1)[0]);
             }
             runOnUiThread(() -> {
                 // set last scramble from scramble list
-                set_new_scramble(scrambles.get(scrambles.size() - 1));
-                set_scramble_font_size(Integer.parseInt(puzzle_properties[1]));
+                setNewScramble(scrambles.get(scrambles.size() - 1));
+                setScrambleFontSize(Integer.parseInt(puzzleProperties[1]));
             });
             // generate and add new scramble to scramble list to avoid waiting when setting up the next scramble
-            scrambles.add(PuzzleRegistry.valueOf(puzzle_properties[0]).getScrambler().generateScrambles(1)[0]);
+            scrambles.add(PuzzleRegistry.valueOf(puzzleProperties[0]).getScrambler().generateScrambles(1)[0]);
         });
         thread.start();
     }
 
-    private String get_score_html_string(int score1, int score2) {
+    private String getScoreHtmlString(int score1, int score2) {
         return "<font color='blue'>" + score1 + "</font> : " + score2;
     }
 
-    private void set_new_scramble(String scramble) {
-        textView_scramble_1.setText(scramble);
-        textView_scramble_2.setText(scramble);
+    private void setNewScramble(String scramble) {
+        textViewScramble1.setText(scramble);
+        textViewScramble2.setText(scramble);
     }
 }

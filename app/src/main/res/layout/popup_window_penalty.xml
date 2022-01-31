@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/penalty_popup"
+    android:id="@+id/penaltyPopup"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/half_visible">
 
     <LinearLayout
-        android:id="@+id/penalty_layout_1"
+        android:id="@+id/penaltyLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
@@ -52,7 +52,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/penalty_layout_2"
+        android:id="@+id/penaltyLayout2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

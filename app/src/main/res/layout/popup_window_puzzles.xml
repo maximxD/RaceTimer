@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/puzzle_popup"
+    android:id="@+id/puzzlePopup"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/half_visible">
@@ -20,7 +20,7 @@
             android:rowCount="4">
 
             <Button
-                android:id="@+id/btn_cube2x2"
+                android:id="@+id/btnCube2x2"
                 android:text="@string/cube2x2"
                 android:textSize="20sp"
                 android:textAllCaps="false"
@@ -31,7 +31,7 @@
                 android:layout_columnSpan="2" />
 
             <Button
-                android:id="@+id/btn_cube3x3"
+                android:id="@+id/btnCube3x3"
                 android:text="@string/cube3x3"
                 android:textSize="20sp"
                 android:textAllCaps="false"
@@ -43,7 +43,7 @@
                 android:layout_columnSpan="2"/>
 
             <Button
-                android:id="@+id/btn_cube4x4"
+                android:id="@+id/btnCube4x4"
                 android:text="@string/cube4x4"
                 android:textSize="20sp"
                 android:textAllCaps="false"
@@ -54,7 +54,7 @@
                 android:layout_columnSpan="2"/>
 
             <Button
-                android:id="@+id/btn_cube5x5"
+                android:id="@+id/btnCube5x5"
                 android:text="@string/cube5x5"
                 android:textSize="20sp"
                 android:textAllCaps="false"
@@ -66,7 +66,7 @@
                 android:layout_columnSpan="2"/>
 
             <Button
-                android:id="@+id/btn_cube6x6"
+                android:id="@+id/btnCube6x6"
                 android:text="@string/cube6x6"
                 android:textSize="20sp"
                 android:textAllCaps="false"
@@ -79,7 +79,7 @@
                 android:layout_columnSpan="2"/>
 
             <Button
-                android:id="@+id/btn_cube7x7"
+                android:id="@+id/btnCube7x7"
                 android:text="@string/cube7x7"
                 android:textSize="20sp"
                 android:textAllCaps="false"
@@ -98,7 +98,7 @@
             android:columnCount="2"
             android:rowCount="4">
             <Button
-                android:id="@+id/btn_pyraminx"
+                android:id="@+id/btnPyraminx"
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"
                 android:text="@string/pyraminx"
@@ -111,7 +111,7 @@
                 android:background="@drawable/rounded_btn_shape"/>
 
             <Button
-                android:id="@+id/btn_square1"
+                android:id="@+id/btnSquare1"
                 android:text="@string/square1"
                 android:textSize="20sp"
                 android:textAllCaps="false"
@@ -124,7 +124,7 @@
                 android:background="@drawable/rounded_btn_shape"/>
 
             <Button
-                android:id="@+id/btn_skewb"
+                android:id="@+id/btnSkewb"
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"
                 android:text="@string/skewb"
@@ -136,7 +136,7 @@
                 android:background="@drawable/rounded_btn_shape"/>
 
             <Button
-                android:id="@+id/btn_megaminx"
+                android:id="@+id/btnMegaminx"
                 android:layout_columnWeight="1"
                 android:layout_rowWeight="1"
                 android:text="@string/megaminx"

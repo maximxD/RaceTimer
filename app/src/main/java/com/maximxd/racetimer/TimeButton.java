@@ -18,22 +18,22 @@ import java.util.TimerTask;
 
 public class TimeButton extends androidx.appcompat.widget.AppCompatButton {
 
-    private long start_time;
+    private long startTime;
     private Timer timer;
-    private int press_counter = 0;    // need to get right delay before start
-    private final int default_color = this.getCurrentTextColor();
+    private int pressCounter = 0;    // need to get right delay before start
+    private final int defaultColor = this.getCurrentTextColor();
 
-    protected boolean is_started = false;
-    protected int curr_time;
-    protected boolean is_processed = true;
-    protected Button btn_stats;
-    protected LinearLayout layout_stats;
+    protected boolean isStarted = false;
+    protected int currTime;
+    protected boolean isProcessed = true;
+    protected Button btnStats;
+    protected LinearLayout layoutStats;
 
-    protected TextView text_view_time;
-    protected ArrayList<Integer> solve_times = new ArrayList<>();
-    protected ArrayList<Integer> solve_penalties = new ArrayList<>();
+    protected TextView textViewTime;
+    protected ArrayList<Integer> solveTimes = new ArrayList<>();
+    protected ArrayList<Integer> solvePenalties = new ArrayList<>();
     protected double[] averages;
-    protected MainActivity main_activity;
+    protected MainActivity mainActivity;
 
     public TimeButton(Context context) {
         super(context);
@@ -47,38 +47,38 @@ public class TimeButton extends androidx.appcompat.widget.AppCompatButton {
         super(context, attrs, defStyleAttr);
     }
 
-    public static String get_formatted_time(int time) {
-        String str_time;
-        double float_time = (double) time / 1000;
+    public static String getFormattedTime(int time) {
+        String strTime;
+        double floatTime = (double) time / 1000;
 
-        if (float_time < 60) {
-            str_time = String.format(Locale.US, "%.3f", float_time);
+        if (floatTime < 60) {
+            strTime = String.format(Locale.US, "%.3f", floatTime);
         } else {
-            String formatted_seconds = String.format(Locale.US, ":%06.3f", float_time % 60);
-            if (float_time < 3600) {
-                str_time = (int) float_time / 60 + formatted_seconds;
+            String formattedSeconds = String.format(Locale.US, ":%06.3f", floatTime % 60);
+            if (floatTime < 3600) {
+                strTime = (int) floatTime / 60 + formattedSeconds;
             } else {
-                str_time = (int) float_time / 3600 + String.format(Locale.US,":%02d", (int) (float_time / 60) % 60) + formatted_seconds;
+                strTime = (int) floatTime / 3600 + String.format(Locale.US,":%02d", (int) (floatTime / 60) % 60) + formattedSeconds;
             }
         }
-        return str_time;
+        return strTime;
     }
 
-    public static String get_formatted_time(double time) {
-        String str_time;
+    public static String getFormattedTime(double time) {
+        String strTime;
         time /= 1000;
 
         if (time < 60) {
-            str_time = String.format(Locale.US, "%.2f", time);
+            strTime = String.format(Locale.US, "%.2f", time);
         } else {
-            String formatted_seconds = String.format(Locale.US, ":%05.2f", time % 60);
+            String formattedSeconds = String.format(Locale.US, ":%05.2f", time % 60);
             if (time < 3600) {
-                str_time = (int) time / 60 + formatted_seconds;
+                strTime = (int) time / 60 + formattedSeconds;
             } else {
-                str_time = (int) time / 3600 + String.format(Locale.US,":%02d", (int) (time / 60) % 60) + formatted_seconds;
+                strTime = (int) time / 3600 + String.format(Locale.US,":%02d", (int) (time / 60) % 60) + formattedSeconds;
             }
         }
-        return str_time;
+        return strTime;
     }
 
     @Override
@@ -86,75 +86,75 @@ public class TimeButton extends androidx.appcompat.widget.AppCompatButton {
         super.onTouchEvent(event);
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            on_press_timer();
+            onPressTimer();
             return true;
         }
         else if (event.getAction() == MotionEvent.ACTION_UP){
-            on_release_timer();
+            onReleaseTimer();
             return true;
         }
         performClick(); // performClick is empty, this line here just to avoid warning
         return false;
     }
 
-    private void on_press_timer() {
-        if (layout_stats.getVisibility() == View.VISIBLE) {
+    private void onPressTimer() {
+        if (layoutStats.getVisibility() == View.VISIBLE) {
             // if stats are shown, hide it
-            main_activity.hide_stats(btn_stats, layout_stats);
-        } else if (is_processed) {
+            mainActivity.hideStats(btnStats, layoutStats);
+        } else if (isProcessed) {
             // if times were already processed (both cubers solved cubes), allow to start/stop the timer.
-            if (is_started) {
+            if (isStarted) {
                 // if the timer was already started, it means that the timer should be stopped.
                 timer.cancel();
-                solve_times.add(curr_time);
-                solve_penalties.add(1);
-                main_activity.calculate_average(solve_times, solve_penalties, averages);
-                is_processed = false;
-                if (main_activity.isBothSolved()) {
-                    main_activity.process_new_scramble();
-                    main_activity.processTimes();
+                solveTimes.add(currTime);
+                solvePenalties.add(1);
+                mainActivity.calculateAverage(solveTimes, solvePenalties, averages);
+                isProcessed = false;
+                if (mainActivity.isBothSolved()) {
+                    mainActivity.processNewScramble();
+                    mainActivity.processTimes();
                 }
                 System.gc();
-                is_started = !is_started;
+                isStarted = !isStarted;
             } else {
                 // if the timer is not started, prepare it to start
-                text_view_time.setTextColor(Color.RED);
-                curr_time = 0;
+                textViewTime.setTextColor(Color.RED);
+                currTime = 0;
                 Timer timer = new Timer();
-                long local_counter = press_counter;    // copy of press_counter to compare with it later
-                TimerTask timer_task = new TimerTask() {
+                int localCounter = pressCounter;    // copy of pressCounter to compare with it later
+                TimerTask timerTask = new TimerTask() {
                     public void run() {
-                        is_still_pressed(local_counter);
+                        isStillPressed(localCounter);
                     }
                 };
-                timer.schedule(timer_task, 350);
+                timer.schedule(timerTask, 350);
             }
         }
     }
 
-    private void is_still_pressed(long counter) {
-        if (press_counter == counter) {
+    private void isStillPressed(int counter) {
+        if (pressCounter == counter) {
             // is button still pressed and was not released during delay
-            text_view_time.setTextColor(Color.GREEN);
-            is_started = !is_started;
+            textViewTime.setTextColor(Color.GREEN);
+            isStarted = !isStarted;
         }
     }
 
-    private void on_release_timer() {
-        press_counter++;  // change press_counter to indicate that the button has been released
-        text_view_time.setTextColor(default_color);
-        if (is_started && is_processed) {
+    private void onReleaseTimer() {
+        pressCounter++;  // change pressCounter to indicate that the button has been released
+        textViewTime.setTextColor(defaultColor);
+        if (isStarted && isProcessed) {
             // if the timer was already processed (both cubers solved cubes), allow to start/stop the timer.
             // if the timer is ready to start, start it.
-            start_time = System.currentTimeMillis();
+            startTime = System.currentTimeMillis();
             timer = new Timer();
-            TimerTask timer_task = new TimerTask() {
+            TimerTask timerTask = new TimerTask() {
                 public void run() {
-                    curr_time = (int) (System.currentTimeMillis() - start_time);
-                    main_activity.runOnUiThread(() -> text_view_time.setText(get_formatted_time(curr_time)));
+                    currTime = (int) (System.currentTimeMillis() - startTime);
+                    mainActivity.runOnUiThread(() -> textViewTime.setText(getFormattedTime(currTime)));
                 }
             };
-            timer.scheduleAtFixedRate(timer_task, 0, 1);
+            timer.scheduleAtFixedRate(timerTask, 0, 1);
         }
     }
 
