@@ -154,15 +154,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showStats(Button btnStats, LinearLayout layoutStats) {
-        layoutStats.setVisibility(View.VISIBLE);
+        runOnUiThread(() -> {
+            layoutStats.setVisibility(View.VISIBLE);
 
-        btnStats.setVisibility(View.GONE);
+            btnStats.setVisibility(View.GONE);
+        });
     }
 
     protected void hideStats(Button btnStats, LinearLayout layoutStats) {
-        layoutStats.setVisibility(View.GONE);
+        runOnUiThread(() -> {
+            layoutStats.setVisibility(View.GONE);
 
-        btnStats.setVisibility(View.VISIBLE);
+            btnStats.setVisibility(View.VISIBLE);
+        });
     }
 
     private void resetAverages() {

@@ -119,21 +119,23 @@
         android:layout_centerVertical="true"
         android:layout_marginStart="20dp"
         android:background="@drawable/rounded_btn_shape"
-        android:padding="10dp"
+        android:padding="7dp"
         android:text="@string/puzzles"
+        android:textColor="@color/white"
         android:textSize="22sp" />
 
     <Button
         android:id="@+id/btnPenalties"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/penalty"
-        android:textSize="22sp"
-        android:padding="10dp"
-        android:background="@drawable/rounded_btn_shape"
-        android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
         android:layout_marginEnd="20dp"
+        android:background="@drawable/rounded_btn_shape"
+        android:padding="7dp"
+        android:text="@string/penalty"
+        android:textColor="@color/white"
+        android:textSize="22sp"
         tools:ignore="RelativeOverlap" />
 
     <Button
@@ -141,9 +143,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/half_rounded_layout_shape"
+        android:rotation="180"
         android:text="@string/stats"
-        android:textSize="22sp"
-        android:rotation="180"/>
+        android:textColor="@color/white"
+        android:textSize="22sp" />
 
     <LinearLayout
         android:id="@+id/layoutStats1"
@@ -161,6 +164,7 @@
             android:layout_marginHorizontal="20dp"
             android:layout_marginTop="20dp"
             android:text="@string/solves"
+            android:textColor="@color/white"
             android:textSize="20sp"
             android:background="@drawable/rounded_btn_shape"/>
 
@@ -235,6 +239,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/half_rounded_layout_shape"
         android:text="@string/stats"
+        android:textColor="@color/white"
         android:textSize="22sp"
         android:layout_alignParentBottom="true"/>
 
@@ -254,6 +259,7 @@
             android:layout_marginHorizontal="20dp"
             android:layout_marginTop="20dp"
             android:text="@string/solves"
+            android:textColor="@color/white"
             android:textSize="20sp"
             android:background="@drawable/rounded_btn_shape"/>
 

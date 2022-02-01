@@ -105,35 +105,46 @@ public class TimeButton extends androidx.appcompat.widget.AppCompatButton {
             // if times were already processed (both cubers solved cubes), allow to start/stop the timer.
             if (isStarted) {
                 // if the timer was already started, it means that the timer should be stopped.
-                timer.cancel();
-                solveTimes.add(currTime);
-                solvePenalties.add(1);
-                mainActivity.calculateAverage(solveTimes, solvePenalties, averages);
-                isProcessed = false;
-                if (mainActivity.isBothSolved()) {
-                    mainActivity.processNewScramble();
-                    mainActivity.processTimes();
-                }
-                System.gc();
-                isStarted = !isStarted;
+                stopTimer();
             } else {
                 // if the timer is not started, prepare it to start
-                textViewTime.setTextColor(Color.RED);
-                currTime = 0;
-                Timer timer = new Timer();
-                int localCounter = pressCounter;    // copy of pressCounter to compare with it later
-                TimerTask timerTask = new TimerTask() {
-                    public void run() {
-                        isStillPressed(localCounter);
-                    }
-                };
-                timer.schedule(timerTask, 350);
+                prepareTimerToStart();
             }
         }
     }
 
+    private void stopTimer() {
+        timer.cancel();
+        btnStats.setVisibility(VISIBLE);
+        solveTimes.add(currTime);
+        solvePenalties.add(1);
+        mainActivity.calculateAverage(solveTimes, solvePenalties, averages);
+        isProcessed = false;
+        if (mainActivity.isBothSolved()) {
+            mainActivity.processNewScramble();
+            mainActivity.processTimes();
+        }
+        System.gc();
+        isStarted = !isStarted;
+    }
+
+    private void prepareTimerToStart() {
+        textViewTime.setTextColor(Color.RED);
+        btnStats.setVisibility(GONE);
+
+        currTime = 0;
+        Timer timer = new Timer();
+        int localCounter = pressCounter;    // copy of pressCounter to compare with it later
+        TimerTask timerTask = new TimerTask() {
+            public void run() {
+                isStillPressed(localCounter);
+            }
+        };
+        timer.schedule(timerTask, 350);
+    }
+
     private void isStillPressed(int counter) {
-        if (pressCounter == counter) {
+        if (pressCounter == counter && layoutStats.getVisibility() != VISIBLE) {
             // is button still pressed and was not released during delay
             textViewTime.setTextColor(Color.GREEN);
             isStarted = !isStarted;
@@ -143,19 +154,26 @@ public class TimeButton extends androidx.appcompat.widget.AppCompatButton {
     private void onReleaseTimer() {
         pressCounter++;  // change pressCounter to indicate that the button has been released
         textViewTime.setTextColor(defaultColor);
+        if (!isStarted) {
+            mainActivity.hideStats(btnStats, layoutStats);
+        }
         if (isStarted && isProcessed) {
             // if the timer was already processed (both cubers solved cubes), allow to start/stop the timer.
             // if the timer is ready to start, start it.
-            startTime = System.currentTimeMillis();
-            timer = new Timer();
-            TimerTask timerTask = new TimerTask() {
-                public void run() {
-                    currTime = (int) (System.currentTimeMillis() - startTime);
-                    mainActivity.runOnUiThread(() -> textViewTime.setText(getFormattedTime(currTime)));
-                }
-            };
-            timer.scheduleAtFixedRate(timerTask, 0, 1);
+            startTimer();
         }
+    }
+
+    private void startTimer() {
+        startTime = System.currentTimeMillis();
+        timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            public void run() {
+                currTime = (int) (System.currentTimeMillis() - startTime);
+                mainActivity.runOnUiThread(() -> textViewTime.setText(getFormattedTime(currTime)));
+            }
+        };
+        timer.scheduleAtFixedRate(timerTask, 0, 1);
     }
 
     @Override

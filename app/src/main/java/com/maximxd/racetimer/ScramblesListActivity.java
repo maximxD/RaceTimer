@@ -64,7 +64,8 @@ public class ScramblesListActivity extends AppCompatActivity {
 
     private List<HashMap<String, String>> getHashMapSolves(ArrayList<String> scrambles, ArrayList<String> stringTimes) {
         List<HashMap<String, String>> list = new ArrayList<>();
-        for (int i = 0; i < scrambles.size(); i++) {
+        for (int i = scrambles.size() - 1; i > -1; i--) {
+            // write solves in the list from the last to the first (in the list view the last solve will be at the top)
             HashMap<String, String> hashMapSolve = new HashMap<>();
             hashMapSolve.put("scramble", scrambles.get(i));
             hashMapSolve.put("time", stringTimes.get(i));
@@ -84,7 +85,7 @@ public class ScramblesListActivity extends AppCompatActivity {
                 LinearLayout layout = (LinearLayout) super.getView(position, convertView, parent);
 
                 TextView textView = (TextView) layout.getChildAt(0);
-                String newText = (position + 1) + ") " + textView.getText().toString();
+                String newText = (scrambles.size() - position) + ") " + textView.getText().toString();
                 textView.setText(newText);
 
                 textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize);

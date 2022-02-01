@@ -4,7 +4,7 @@
     android:id="@+id/penaltyPopup"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/half_visible">
+    android:background="?attr/colorSecondaryVariant">
 
     <LinearLayout
         android:id="@+id/penaltyLayout1"
@@ -25,6 +25,7 @@
             android:background="@drawable/rounded_btn_shape"
             android:padding="15dp"
             android:text="@string/ok"
+            android:textColor="@color/white"
             android:textSize="25sp"
             tools:ignore="ButtonStyle" />
 
@@ -36,6 +37,7 @@
             android:background="@drawable/rounded_btn_shape"
             android:padding="15dp"
             android:text="@string/plus2"
+            android:textColor="@color/white"
             android:textSize="25sp"
             tools:ignore="ButtonStyle" />
 
@@ -46,6 +48,7 @@
             android:background="@drawable/rounded_btn_shape"
             android:padding="15dp"
             android:text="@string/dnf"
+            android:textColor="@color/white"
             android:textSize="25sp"
             tools:ignore="ButtonStyle" />
 
@@ -69,6 +72,7 @@
             android:background="@drawable/rounded_btn_shape"
             android:padding="15dp"
             android:text="@string/ok"
+            android:textColor="@color/white"
             android:textSize="25sp"
             tools:ignore="ButtonStyle" />
 
@@ -80,6 +84,7 @@
             android:background="@drawable/rounded_btn_shape"
             android:padding="15dp"
             android:text="@string/plus2"
+            android:textColor="@color/white"
             android:textSize="25sp"
             tools:ignore="ButtonStyle" />
 
@@ -90,6 +95,7 @@
             android:background="@drawable/rounded_btn_shape"
             android:padding="15dp"
             android:text="@string/dnf"
+            android:textColor="@color/white"
             android:textSize="25sp"
             tools:ignore="ButtonStyle" />
     </LinearLayout>

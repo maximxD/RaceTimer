@@ -34,9 +34,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/textViewScrambles1"
-            android:divider="?attr/colorOnSecondary"
-            android:dividerHeight="1dp"
-            android:listSelector="@color/invisible" />
+            android:divider="@color/invisible"
+            android:dividerHeight="10dp"
+            android:listSelector="@color/invisible"
+            android:padding="5dp" />
 
     </RelativeLayout>
 
@@ -53,10 +54,10 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="10dp"
+        android:layout_marginEnd="20dp"
         android:background="@drawable/rounded_btn_shape"
         android:text="@string/back_to_timer"
-        android:padding="10dp"
+        android:padding="7dp"
         android:textSize="22sp"/>
 
     <RelativeLayout
@@ -68,7 +69,7 @@
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_below="@+id/textViewScrambles2"
-            android:background="?attr/colorOnSecondary"/>
+            android:background="?attr/colorOnSecondary" />
 
         <TextView
             android:id="@+id/textViewScrambles2"
@@ -86,9 +87,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/textViewScrambles2"
-            android:divider="?attr/colorOnSecondary"
-            android:dividerHeight="1dp"
-            android:listSelector="@color/invisible" />
+            android:divider="@color/invisible"
+            android:dividerHeight="10dp"
+            android:listSelector="@color/invisible"
+            android:padding="5dp" />
 
     </RelativeLayout>
 

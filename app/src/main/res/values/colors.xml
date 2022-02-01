@@ -10,6 +10,7 @@
     <color name="light_gray">#787878</color>
     <color name="dark_gray">#464646</color>
     <color name="invisible">#00FFFFFF</color>
-    <color name="half_visible">#80FFFFFF</color>
+    <color name="half_visible_light">#80FFFFFF</color>
+    <color name="half_visible_dark">#80000000</color>
     <color name="green">#4CAF50</color>
 </resources>
