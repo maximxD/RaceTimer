@@ -22,26 +22,13 @@ import java.util.Collections;
 public class MainActivity extends AppCompatActivity {
 
     private TextView textViewScore1, textViewScore2;
-    private TextView textViewScramble1, textViewScramble2;
-    private Button btnStats1, btnStats2;
-    private LinearLayout layoutStats1, layoutStats2;
 
     private final ArrayList<String> scrambles = new ArrayList<>();
     private final ArrayList<Integer> winsList = new ArrayList<>();    // list of winners for each solve
+    private String[] puzzleProperties = {"THREE", "23"};    // format: {<PUZZLE>, <FONT_SIZE>}
 
     protected RelativeLayout mainLayout;
-    protected TimeButton btnTime1, btnTime2;
-
-    protected String[] puzzleProperties = {"THREE", "23"};    // format: {<PUZZLE>, <FONT_SIZE>}
-
-    protected final ArrayList<Integer> solveTimes1 = new ArrayList<>();
-    protected final ArrayList<Integer> solveTimes2 = new ArrayList<>();
-
-    protected final ArrayList<Integer> solvePenalties1 = new ArrayList<>();
-    protected final ArrayList<Integer> solvePenalties2 = new ArrayList<>();
-
-    protected double[] averages1 = {0, 0, 0, 0, 0};
-    protected double[] averages2 = {0, 0, 0, 0, 0};
+    protected TimeButton timer1, timer2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,39 +36,26 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mainLayout = findViewById(R.id.main);
-        btnTime1 = findViewById(R.id.btnTime1);
-        btnTime2 = findViewById(R.id.btnTime2);
+        timer1 = findViewById(R.id.btnTime1);
+        timer2 = findViewById(R.id.btnTime2);
         textViewScore1 = findViewById(R.id.textViewScore1);
         textViewScore2 = findViewById(R.id.textViewScore2);
-        textViewScramble1 = findViewById(R.id.textViewScramble1);
-        textViewScramble2 = findViewById(R.id.textViewScramble2);
-        btnStats1 = findViewById(R.id.btnStats1);
-        btnStats2 = findViewById(R.id.btnStats2);
-        layoutStats1 = findViewById(R.id.layoutStats1);
-        layoutStats2 = findViewById(R.id.layoutStats2);
 
         processNewScramble();
 
-        btnTime1.textViewTime = findViewById(R.id.textViewTime1);
-        btnTime2.textViewTime = findViewById(R.id.textViewTime2);
-        btnTime1.solveTimes = solveTimes1;
-        btnTime2.solveTimes = solveTimes2;
-        btnTime1.solvePenalties = solvePenalties1;
-        btnTime2.solvePenalties = solvePenalties2;
-        btnTime1.mainActivity = this;
-        btnTime2.mainActivity = this;
-        btnTime1.btnStats = btnStats1;
-        btnTime1.layoutStats = layoutStats1;
-        btnTime2.btnStats = btnStats2;
-        btnTime2.layoutStats = layoutStats2;
-        btnTime1.averages = averages1;
-        btnTime2.averages = averages2;
+        timer1.init(findViewById(R.id.textViewTime1), findViewById(R.id.btnStats1),
+                findViewById(R.id.layoutStats1), this);
+        timer2.init(findViewById(R.id.textViewTime2), findViewById(R.id.btnStats2),
+                findViewById(R.id.layoutStats2), this);
+
+        timer1.bind_stats_button(findViewById(R.id.statList1));
+        timer2.bind_stats_button(findViewById(R.id.statList2));
 
         Button btnPuzzles = findViewById(R.id.btnPuzzles);
         btnPuzzles.setOnClickListener(view -> {
-            if (!btnTime1.isStarted && !btnTime2.isStarted) {
-                hideStats(btnStats1, layoutStats1);
-                hideStats(btnStats2, layoutStats2);
+            if (timer1.getIsNotStarted() && timer2.getIsNotStarted()) {
+                hideStats(timer1.getBtnStats(), timer1.getLayoutStats());
+                hideStats(timer2.getBtnStats(), timer2.getLayoutStats());
 
                 createPuzzlePopupWindow();
             }
@@ -89,54 +63,45 @@ public class MainActivity extends AppCompatActivity {
 
         Button btnPenalties = findViewById(R.id.btnPenalties);
         btnPenalties.setOnClickListener(view -> {
-            if (btnTime1.isProcessed && btnTime2.isProcessed && !btnTime1.isStarted && !btnTime2.isStarted) {
-                hideStats(btnStats1, layoutStats1);
-                hideStats(btnStats2, layoutStats2);
+            if (timer1.getIsProcessed() && timer2.getIsProcessed() &&
+                    timer1.getIsNotStarted() && timer2.getIsNotStarted()) {
+                hideStats(timer1.getBtnStats(), timer1.getLayoutStats());
+                hideStats(timer2.getBtnStats(), timer2.getLayoutStats());
 
                 createPenaltyPopupWindow();
             }
         });
 
-        btnStats1.setOnClickListener(view -> {
-            if (!btnTime1.isStarted) {
-                setAverage(findViewById(R.id.statList1), solvePenalties1, averages1);
-                showStats(btnStats1, layoutStats1);
-            }
-        });
-
-        btnStats2.setOnClickListener(view -> {
-            if (!btnTime2.isStarted) {
-                setAverage(findViewById(R.id.statList2), solvePenalties2, averages2);
-                showStats(btnStats2, layoutStats2);
-            }
-        });
-
         Button btnSolves1 = findViewById(R.id.btnScrambles1);
         btnSolves1.setOnClickListener(view -> {
-            if (!btnTime2.isStarted && btnTime1.isProcessed && btnTime2.isProcessed) {
+            if (timer2.getIsNotStarted() && timer1.getIsProcessed() && timer2.getIsProcessed()) {
                 goToSolveListActivity();
             }
         });
 
         Button btnSolves2 = findViewById(R.id.btnScrambles2);
         btnSolves2.setOnClickListener(view -> {
-            if (!btnTime1.isStarted && btnTime1.isProcessed && btnTime2.isProcessed) {
+            if (timer1.getIsNotStarted() && timer1.getIsProcessed() && timer2.getIsProcessed()) {
                 goToSolveListActivity();
             }
         });
     }
 
+    protected void setPuzzleProperties(String[] puzzleProperties) {
+        this.puzzleProperties = puzzleProperties;
+    }
+
     private void goToSolveListActivity() {
         Intent intent = new Intent(this, ScramblesListActivity.class);
-        intent.putExtra("scrambles", new ArrayList<>(scrambles.subList(0, solveTimes1.size())));
+        intent.putExtra("scrambles", new ArrayList<>(scrambles.subList(0, timer1.getSolveTimes().size())));
         intent.putExtra("fontSize", Integer.parseInt(puzzleProperties[1]));
-        intent.putExtra("solveTimes1", solveTimes1);
-        intent.putExtra("solveTimes2", solveTimes2);
-        intent.putExtra("solvePenalties1", solvePenalties1);
-        intent.putExtra("solvePenalties2", solvePenalties2);
+        intent.putExtra("solveTimes1", timer1.getSolveTimes());
+        intent.putExtra("solveTimes2", timer2.getSolveTimes());
+        intent.putExtra("solvePenalties1", timer1.getSolvePenalties());
+        intent.putExtra("solvePenalties2", timer2.getSolvePenalties());
         startActivity(intent);
-        hideStats(btnStats1, layoutStats1);
-        hideStats(btnStats2, layoutStats2);
+        hideStats(timer1.getBtnStats(), timer1.getLayoutStats());
+        hideStats(timer2.getBtnStats(), timer2.getLayoutStats());
     }
 
     private void createPenaltyPopupWindow() {
@@ -153,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
         new MyPopupWindow(popupView, this, R.layout.popup_window_puzzles);
     }
 
-    private void showStats(Button btnStats, LinearLayout layoutStats) {
+    protected void showStats(Button btnStats, LinearLayout layoutStats) {
         runOnUiThread(() -> {
             layoutStats.setVisibility(View.VISIBLE);
 
@@ -189,14 +154,14 @@ public class MainActivity extends AppCompatActivity {
         textViewAvg.setText(solves);
     }
 
-    private void setAverage(GridLayout glAvgList, ArrayList<Integer> solveTimes, double[] averages) {
+    protected void setAverage(GridLayout glAvgList, ArrayList<Integer> solvePenalties, double[] averages) {
         int[] avgNumList = {5, 12, 25, 50, 100};
         String[] avgStrList = {"avg5: ", "avg12: ", "avg25: ", "avg50: ", "avg100: "};
 
         TextView textViewStats;
         String newStatsStr;
         for (int i = 0; i < 5; i++) {
-            if (solveTimes.size() >= avgNumList[i]) {
+            if (solvePenalties.size() >= avgNumList[i]) {
                 // if number of solves enough to set this average
                 textViewStats = (TextView) glAvgList.getChildAt(i);
                 if (averages[i] == 0) {
@@ -213,13 +178,13 @@ public class MainActivity extends AppCompatActivity {
         }
         textViewStats = (TextView) glAvgList.getChildAt(5);
         int withoutDnfCount = 0;
-        for (int solve: solveTimes) {
-            if (solve != 3) {
+        for (int penaltyId: solvePenalties) {
+            if (penaltyId != 3) {
                 withoutDnfCount += 1;
             }
         }
 
-        newStatsStr = "solves: " + withoutDnfCount + "/" + solveTimes.size();
+        newStatsStr = "solves: " + withoutDnfCount + "/" + solvePenalties.size();
         textViewStats.setText(newStatsStr);
     }
 
@@ -227,44 +192,48 @@ public class MainActivity extends AppCompatActivity {
         if (winsList.size() > 0) {
             winsList.remove(winsList.size() - 1);
 
-            setScore(solveTimes1.get(solveTimes1.size() - 1), solveTimes2.get(solveTimes2.size() - 1),
-                    solvePenalties1.get(solvePenalties1.size() - 1), solvePenalties2.get(solvePenalties2.size() - 1));
+            setScore(
+                    timer1.getSolveTimes().get(timer1.getSolveTimes().size() - 1),
+                    timer2.getSolveTimes().get(timer2.getSolveTimes().size() - 1),
+                    timer1.getSolvePenalties().get(timer1.getSolvePenalties().size() - 1),
+                    timer2.getSolvePenalties().get(timer2.getSolvePenalties().size() - 1)
+            );
         }
     }
 
+    private void resetScore() {
+        textViewScore1.setText(HtmlCompat.fromHtml(getScoreHtmlString(0, 0), HtmlCompat.FROM_HTML_MODE_LEGACY));
+        textViewScore2.setText(HtmlCompat.fromHtml(getScoreHtmlString(0, 0), HtmlCompat.FROM_HTML_MODE_LEGACY));
+    }
+
     private void setScore(int time1, int time2, int penaltyId1, int penaltyId2) {
-        if (solveTimes1.size() > 0) {
-            if (penaltyId1 == 3 || penaltyId2 == 3) {
-                // if any cuber got DNF
-                if (penaltyId1 == 3 && penaltyId2 != 3) {
-                    // if only cuber1 got DNF, then cuber2 won
-                    winsList.add(2);
-                } else if (penaltyId1 != 3) {
-                    // if only cuber2 got DNF, then cuber1 won
-                    winsList.add(1);
-                } else {
-                    // both cubers got DNF, it is a draw
-                    winsList.add(0);
-                }
-            } else if (time1 < time2) {
-                winsList.add(1);
-            } else if (time1 > time2) {
+        if (penaltyId1 == 3 || penaltyId2 == 3) {
+            // if any cuber got DNF
+            if (penaltyId1 == 3 && penaltyId2 != 3) {
+                // if only cuber1 got DNF, then cuber2 won
                 winsList.add(2);
+            } else if (penaltyId1 != 3) {
+                // if only cuber2 got DNF, then cuber1 won
+                winsList.add(1);
             } else {
+                // both cubers got DNF, it is a draw
                 winsList.add(0);
             }
-            textViewScore1.setText(HtmlCompat.fromHtml(getScoreHtmlString(
-                                     Collections.frequency(winsList, 1),
-                                     Collections.frequency(winsList, 2)),
-                                     HtmlCompat.FROM_HTML_MODE_LEGACY));
-            textViewScore2.setText(HtmlCompat.fromHtml(getScoreHtmlString(
-                                     Collections.frequency(winsList, 2),
-                                     Collections.frequency(winsList, 1)),
-                                     HtmlCompat.FROM_HTML_MODE_LEGACY));
+        } else if (time1 < time2) {
+            winsList.add(1);
+        } else if (time1 > time2) {
+            winsList.add(2);
         } else {
-            textViewScore1.setText(HtmlCompat.fromHtml(getScoreHtmlString(0, 0), HtmlCompat.FROM_HTML_MODE_LEGACY));
-            textViewScore2.setText(HtmlCompat.fromHtml(getScoreHtmlString(0, 0), HtmlCompat.FROM_HTML_MODE_LEGACY));
+            winsList.add(0);
         }
+        textViewScore1.setText(HtmlCompat.fromHtml(getScoreHtmlString(
+                Collections.frequency(winsList, 1),
+                Collections.frequency(winsList, 2)),
+                HtmlCompat.FROM_HTML_MODE_LEGACY));
+        textViewScore2.setText(HtmlCompat.fromHtml(getScoreHtmlString(
+                Collections.frequency(winsList, 2),
+                Collections.frequency(winsList, 1)),
+                HtmlCompat.FROM_HTML_MODE_LEGACY));
     }
 
     protected void setPenalty(ArrayList<Integer> solveTimes, ArrayList<Integer> solvePenalties, TextView textView, int penaltyId) {
@@ -381,62 +350,63 @@ public class MainActivity extends AppCompatActivity {
         scrambles.clear();
         processNewScramble();
 
-        solveTimes1.clear();
-        solveTimes2.clear();
-        solvePenalties1.clear();
-        solvePenalties2.clear();
-
         winsList.clear();
 
-        btnTime1.isProcessed = true;
-        btnTime2.isProcessed = true;
-        btnTime1.textViewTime.setText(getString(R.string.start_time));
-        btnTime2.textViewTime.setText(getString(R.string.start_time));
+        timer1.getSolveTimes().clear();
+        timer2.getSolveTimes().clear();
+        timer1.getSolvePenalties().clear();
+        timer2.getSolvePenalties().clear();
 
-        for (int i = 0; i < 5; i++) {
-            averages1[i] = 0;
-            averages2[i] = 0;
-        }
+        timer1.setProcessed();
+        timer2.setProcessed();
+        timer1.getTextViewTime().setText(getString(R.string.start_time));
+        timer2.getTextViewTime().setText(getString(R.string.start_time));
+
+        timer1.clearAverages();
+        timer2.clearAverages();
+
         resetAverages();
 
-        setScore(0, 0, 1, 1);
+        resetScore();
     }
 
-    private void setScrambleFontSize(int fontSize) {
+    private void setScrambleFontSize(int fontSize, TextView textViewScramble1, TextView textViewScramble2) {
         textViewScramble1.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize);
         textViewScramble2.setTextSize(TypedValue.COMPLEX_UNIT_SP, fontSize);
     }
 
     protected boolean isBothSolved() {
         // did both cubers solve cubes?
-        return !btnTime1.isProcessed && !btnTime2.isProcessed;
+        return !timer1.getIsProcessed() && !timer2.getIsProcessed();
     }
 
     protected void processTimes() {
-        setScore(btnTime1.currTime, btnTime2.currTime,1, 1);
-        btnTime1.isProcessed = true;
-        btnTime2.isProcessed = true;
+        setScore(timer1.getCurrTime(), timer2.getCurrTime(),1, 1);
+        timer1.setProcessed();
+        timer2.setProcessed();
     }
 
     protected void processNewScramble() {
         // generate and set new scramble in another thread
         Thread thread = new Thread(() -> {
+            TextView textViewScramble1 = findViewById(R.id.textViewScramble1);
+            TextView textViewScramble2 = findViewById(R.id.textViewScramble2);
             if (scrambles.isEmpty()) {
                 // if scramble list is empty, generate first scramble
                 runOnUiThread(() -> {
                     // set text "Generating scramble..."
-                    setScrambleFontSize(25);
-                    setNewScramble(getString(R.string.generating_scramble));
+                    setScrambleFontSize(25, textViewScramble1, textViewScramble2);
+                    setNewScramble(getString(R.string.generating_scramble), textViewScramble1, textViewScramble2);
                 });
-                // generate and add new scramble to scramble list
+                // generate and add first scramble to scramble list
                 scrambles.add(PuzzleRegistry.valueOf(puzzleProperties[0]).getScrambler().generateScrambles(1)[0]);
             }
             runOnUiThread(() -> {
                 // set last scramble from scramble list
-                setNewScramble(scrambles.get(scrambles.size() - 1));
-                setScrambleFontSize(Integer.parseInt(puzzleProperties[1]));
+                setNewScramble(scrambles.get(scrambles.size() - 1), textViewScramble1, textViewScramble2);
+                setScrambleFontSize(Integer.parseInt(puzzleProperties[1]), textViewScramble1, textViewScramble2);
             });
-            // generate and add new scramble to scramble list to avoid waiting when setting up the next scramble
+            // generate and add new scramble to scramble list to avoid waiting when setting up the scramble next time
             scrambles.add(PuzzleRegistry.valueOf(puzzleProperties[0]).getScrambler().generateScrambles(1)[0]);
         });
         thread.start();
@@ -446,7 +416,7 @@ public class MainActivity extends AppCompatActivity {
         return "<font color='blue'>" + score1 + "</font> : " + score2;
     }
 
-    private void setNewScramble(String scramble) {
+    private void setNewScramble(String scramble, TextView textViewScramble1, TextView textViewScramble2) {
         textViewScramble1.setText(scramble);
         textViewScramble2.setText(scramble);
     }

@@ -6,6 +6,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -22,18 +23,17 @@ public class TimeButton extends androidx.appcompat.widget.AppCompatButton {
     private Timer timer;
     private int pressCounter = 0;    // need to get right delay before start
     private final int defaultColor = this.getCurrentTextColor();
+    private boolean isStarted = false;
+    private int currTime;
+    private boolean isProcessed = true;
 
-    protected boolean isStarted = false;
-    protected int currTime;
-    protected boolean isProcessed = true;
-    protected Button btnStats;
-    protected LinearLayout layoutStats;
-
-    protected TextView textViewTime;
-    protected ArrayList<Integer> solveTimes = new ArrayList<>();
-    protected ArrayList<Integer> solvePenalties = new ArrayList<>();
-    protected double[] averages;
-    protected MainActivity mainActivity;
+    private Button btnStats;
+    private LinearLayout layoutStats;
+    private TextView textViewTime;
+    private final ArrayList<Integer> solveTimes = new ArrayList<>();
+    private final ArrayList<Integer> solvePenalties = new ArrayList<>();    // 1 -> OK; 2 -> +2; 3 -> DNF
+    private double[] averages = {0, 0, 0, 0, 0};
+    private MainActivity mainActivity;
 
     public TimeButton(Context context) {
         super(context);
@@ -45,6 +45,68 @@ public class TimeButton extends androidx.appcompat.widget.AppCompatButton {
 
     public TimeButton(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+    }
+
+    protected void init(TextView textViewTime, Button btnStats,
+                        LinearLayout layoutStats, MainActivity mainActivity) {
+        this.textViewTime = textViewTime;
+        this.btnStats = btnStats;
+        this.layoutStats = layoutStats;
+        this.mainActivity = mainActivity;
+
+    }
+
+    protected void bind_stats_button(GridLayout glAvgList) {
+        btnStats.setOnClickListener(view -> {
+            if (!isStarted) {
+                mainActivity.setAverage(glAvgList, solvePenalties, averages);
+                mainActivity.showStats(btnStats, layoutStats);
+            }
+        });
+    }
+
+    protected Button getBtnStats() {
+        return btnStats;
+    }
+
+    protected LinearLayout getLayoutStats() {
+        return layoutStats;
+    }
+
+    protected TextView getTextViewTime() {
+        return textViewTime;
+    }
+
+    protected ArrayList<Integer> getSolveTimes() {
+        return solveTimes;
+    }
+
+    protected ArrayList<Integer> getSolvePenalties() {
+        return solvePenalties;
+    }
+
+    protected double[] getAverages() {
+        return averages;
+    }
+
+    protected void clearAverages() {
+        averages = new double[] {0, 0, 0, 0, 0};
+    }
+
+    protected boolean getIsProcessed() {
+        return isProcessed;
+    }
+
+    protected void setProcessed() {
+        this.isProcessed = true;
+    }
+
+    protected boolean getIsNotStarted() {
+        return !isStarted;
+    }
+
+    protected int getCurrTime() {
+        return currTime;
     }
 
     public static String getFormattedTime(int time) {

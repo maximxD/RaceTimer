@@ -24,11 +24,13 @@ public class MyPopupWindow extends PopupWindow {
         if (popupWindowId == R.layout.popup_window_puzzles) {
             bindChangePuzzleButtons(popupView, mainActivity);
         } else {
-            bindPenaltyButton(popupView.findViewById(R.id.penaltyLayout1), mainActivity.solveTimes1,
-                    mainActivity.solvePenalties1, mainActivity.btnTime1.textViewTime, mainActivity.averages1,
+            bindPenaltyButton(popupView.findViewById(R.id.penaltyLayout1),
+                    mainActivity.timer1.getSolveTimes(), mainActivity.timer1.getSolvePenalties(),
+                    mainActivity.timer1.getTextViewTime(), mainActivity.timer1.getAverages(),
                     mainActivity);
-            bindPenaltyButton(popupView.findViewById(R.id.penaltyLayout2), mainActivity.solveTimes2,
-                    mainActivity.solvePenalties2, mainActivity.btnTime2.textViewTime, mainActivity.averages2,
+            bindPenaltyButton(popupView.findViewById(R.id.penaltyLayout2),
+                    mainActivity.timer2.getSolveTimes(), mainActivity.timer2.getSolvePenalties(),
+                    mainActivity.timer2.getTextViewTime(), mainActivity.timer2.getAverages(),
                     mainActivity);
         }
     }
@@ -69,12 +71,12 @@ public class MyPopupWindow extends PopupWindow {
     }
 
     private void changePuzzle(Map<Integer, String[]> PUZZLES_DICT, Button button, MainActivity mainActivity) {
-        mainActivity.puzzleProperties = PUZZLES_DICT.get(button.getId());
+        mainActivity.setPuzzleProperties(PUZZLES_DICT.get(button.getId()));
     }
 
     private Map<Integer, String[]> getIdToPuzzleDict(int[] BUTTONS_IDS){
         // create id to puzzle properties dictionary (R.id.<button> : {<PUZZLE>, <FONT_SIZE>})
-        String[][] PUZZLE_LIST = {{"TWO", "25"}, {"THREE", "23"}, {"FOUR_FAST", "19"}, {"FIVE", "18"},
+        String[][] PUZZLE_LIST = {{"TWO", "25"}, {"THREE", "23"}, {"FOUR", "19"}, {"FIVE", "18"},
                 {"SIX", "17"}, {"SEVEN", "15"}, {"PYRA", "25"}, {"SQ1", "20"}, {"SKEWB", "25"}, {"MEGA", "16"}};
         Map<Integer, String[]> puzzlesDict = new HashMap<>();
         for (int i = 0; i < 10; i++) {
