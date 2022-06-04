@@ -34,6 +34,7 @@ public class TimeButton extends androidx.appcompat.widget.AppCompatButton {
     private final ArrayList<Integer> solvePenalties = new ArrayList<>();    // 1 -> OK; 2 -> +2; 3 -> DNF
     private double[] averages = {0, 0, 0, 0, 0};
     private MainActivity mainActivity;
+    private GridLayout glStatList;
 
     public TimeButton(Context context) {
         super(context);
@@ -48,21 +49,23 @@ public class TimeButton extends androidx.appcompat.widget.AppCompatButton {
     }
 
     protected void init(TextView textViewTime, Button btnStats,
-                        LinearLayout layoutStats, MainActivity mainActivity) {
+                        LinearLayout layoutStats, GridLayout glStatList, MainActivity mainActivity) {
         this.textViewTime = textViewTime;
         this.btnStats = btnStats;
         this.layoutStats = layoutStats;
         this.mainActivity = mainActivity;
+        this.glStatList = glStatList;
 
-    }
-
-    protected void bind_stats_button(GridLayout glAvgList) {
         btnStats.setOnClickListener(view -> {
             if (!isStarted) {
-                mainActivity.setAverage(glAvgList, solvePenalties, averages);
+                mainActivity.setAverage(glStatList, solvePenalties, averages);
                 mainActivity.showStats(btnStats, layoutStats);
             }
         });
+    }
+
+    protected GridLayout getGlStatList() {
+        return glStatList;
     }
 
     protected Button getBtnStats() {
@@ -186,7 +189,6 @@ public class TimeButton extends androidx.appcompat.widget.AppCompatButton {
             mainActivity.processNewScramble();
             mainActivity.processTimes();
         }
-        System.gc();
         isStarted = !isStarted;
     }
 
@@ -214,13 +216,13 @@ public class TimeButton extends androidx.appcompat.widget.AppCompatButton {
     }
 
     private void onReleaseTimer() {
-        pressCounter++;  // change pressCounter to indicate that the button has been released
+        pressCounter++;  // increase pressCounter to indicate that the button has been released
         textViewTime.setTextColor(defaultColor);
         if (!isStarted) {
             mainActivity.hideStats(btnStats, layoutStats);
         }
         if (isStarted && isProcessed) {
-            // if the timer was already processed (both cubers solved cubes), allow to start/stop the timer.
+            // if the timer was already processed (both cubers ended solves), allow to start/stop the timer.
             // if the timer is ready to start, start it.
             startTimer();
         }

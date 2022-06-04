@@ -44,12 +44,9 @@ public class MainActivity extends AppCompatActivity {
         processNewScramble();
 
         timer1.init(findViewById(R.id.textViewTime1), findViewById(R.id.btnStats1),
-                findViewById(R.id.layoutStats1), this);
+                findViewById(R.id.layoutStats1), findViewById(R.id.statList1), this);
         timer2.init(findViewById(R.id.textViewTime2), findViewById(R.id.btnStats2),
-                findViewById(R.id.layoutStats2), this);
-
-        timer1.bind_stats_button(findViewById(R.id.statList1));
-        timer2.bind_stats_button(findViewById(R.id.statList2));
+                findViewById(R.id.layoutStats2), findViewById(R.id.statList2), this);
 
         Button btnPuzzles = findViewById(R.id.btnPuzzles);
         btnPuzzles.setOnClickListener(view -> {
@@ -119,38 +116,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void showStats(Button btnStats, LinearLayout layoutStats) {
-        runOnUiThread(() -> {
-            layoutStats.setVisibility(View.VISIBLE);
+        layoutStats.setVisibility(View.VISIBLE);
 
-            btnStats.setVisibility(View.GONE);
-        });
+        btnStats.setVisibility(View.GONE);
     }
 
     protected void hideStats(Button btnStats, LinearLayout layoutStats) {
-        runOnUiThread(() -> {
-            layoutStats.setVisibility(View.GONE);
+        layoutStats.setVisibility(View.GONE);
 
-            btnStats.setVisibility(View.VISIBLE);
-        });
+        btnStats.setVisibility(View.VISIBLE);
     }
 
     private void resetAverages() {
         String[] avgStrList = {"avg5: ", "avg12: ", "avg25: ", "avg50: ", "avg100: "};
-        GridLayout glStatList1 = findViewById(R.id.statList1);
-        GridLayout glStatList2 = findViewById(R.id.statList2);
         TextView textViewAvg;
         for (int i = 0; i < 5; i++) {
-            textViewAvg = (TextView) glStatList1.getChildAt(i);
+            textViewAvg = (TextView) timer1.getGlStatList().getChildAt(i);
             textViewAvg.setText(avgStrList[i]);
 
-            textViewAvg = (TextView) glStatList2.getChildAt(i);
+            textViewAvg = (TextView) timer2.getGlStatList().getChildAt(i);
             textViewAvg.setText(avgStrList[i]);
         }
         String solves = "solves: 0/0";
-        textViewAvg = (TextView) glStatList1.getChildAt(5);
+        textViewAvg = (TextView) timer1.getGlStatList().getChildAt(5);
         textViewAvg.setText(solves);
 
-        textViewAvg = (TextView) glStatList2.getChildAt(5);
+        textViewAvg = (TextView) timer2.getGlStatList().getChildAt(5);
         textViewAvg.setText(solves);
     }
 
@@ -159,18 +150,18 @@ public class MainActivity extends AppCompatActivity {
         String[] avgStrList = {"avg5: ", "avg12: ", "avg25: ", "avg50: ", "avg100: "};
 
         TextView textViewStats;
-        String newStatsStr;
+        String newStatStr;
         for (int i = 0; i < 5; i++) {
             if (solvePenalties.size() >= avgNumList[i]) {
                 // if number of solves enough to set this average
                 textViewStats = (TextView) glAvgList.getChildAt(i);
                 if (averages[i] == 0) {
                     // if average == 0 -> DNF
-                    newStatsStr = avgStrList[i] + "DNF";
+                    newStatStr = avgStrList[i] + "DNF";
                 } else {
-                    newStatsStr = avgStrList[i] + TimeButton.getFormattedTime(averages[i]);
+                    newStatStr = avgStrList[i] + TimeButton.getFormattedTime(averages[i]);
                 }
-                textViewStats.setText(newStatsStr);
+                textViewStats.setText(newStatStr);
             }
             else {
                 break;
@@ -184,8 +175,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        newStatsStr = "solves: " + withoutDnfCount + "/" + solvePenalties.size();
-        textViewStats.setText(newStatsStr);
+        newStatStr = "solves: " + withoutDnfCount + "/" + solvePenalties.size();
+        textViewStats.setText(newStatStr);
     }
 
     protected void recalculateScore() {
@@ -278,9 +269,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private double getAvg(ArrayList<Integer> solveTimes, ArrayList<Integer> solvePenalties, int avgOf, int thrown) {
-        int numberOfSolves = solveTimes.size();
         ArrayList<Integer> solveTimesNeed = new ArrayList<>();    // last <avgOf> solves
-        for (int i = numberOfSolves - avgOf; i < numberOfSolves; i++) {
+        for (int i = solveTimes.size() - avgOf; i < solveTimes.size(); i++) {
             // Add only non-dnf solves in solveTimesNeed
             if (solvePenalties.get(i) != 3) {
                 solveTimesNeed.add(solveTimes.get(i));
@@ -289,14 +279,14 @@ public class MainActivity extends AppCompatActivity {
         if (solveTimesNeed.size() < avgOf - thrown) {
             return 0;
         } else {
-            // sort times to make average counting easier
-            sortSolveTimes(solveTimesNeed, 0, solveTimesNeed.size() - 1);
-
-            // throw a given number of best solves
-            solveTimesNeed.subList(0, thrown).clear();
-
-            // throw a given number of worst solves
-            solveTimesNeed.subList(avgOf - thrown*2, solveTimesNeed.size()).clear();
+            // remove <thrown> best solves
+            for (int i = 0; i < thrown; i++) {
+                solveTimesNeed.remove(Collections.min(solveTimesNeed));
+            }
+            // remove worst solves until size of array would not be equal to avgOf - thrown*2
+            while (solveTimesNeed.size() > avgOf - thrown*2) {
+                solveTimesNeed.remove(Collections.max(solveTimesNeed));
+            }
 
             return getMean(solveTimesNeed);
         }
@@ -312,37 +302,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return (double) (sumTimes - sumTimes % 10) / count;
-    }
-
-    private static void sortSolveTimes(ArrayList<Integer> solveTimes, int low, int high) {
-        if (solveTimes.size() == 0) {
-            return;
-        }
-        if (low >= high) {
-            return;
-        }
-        int middle = low + (high - low) / 2;
-        int main = solveTimes.get(middle);
-
-        int i = low, j = high;
-        while (i <= j) {
-            while (solveTimes.get(i) < main) {
-                i++;
-            }
-            while (solveTimes.get(j) > main) {
-                j--;
-            }
-            if (i <= j) {
-                Collections.swap(solveTimes, i, j);
-                i++;
-                j--;
-            }
-        }
-
-        if (low < j)
-            sortSolveTimes(solveTimes, low, j);
-        if (high > i)
-            sortSolveTimes(solveTimes, i, high);
     }
 
     protected void resetAll() {
@@ -376,7 +335,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected boolean isBothSolved() {
-        // did both cubers solve cubes?
+        // did both cubers solve cubes? (inProcessed becomes false when timer stops)
         return !timer1.getIsProcessed() && !timer2.getIsProcessed();
     }
 
@@ -384,6 +343,14 @@ public class MainActivity extends AppCompatActivity {
         setScore(timer1.getCurrTime(), timer2.getCurrTime(),1, 1);
         timer1.setProcessed();
         timer2.setProcessed();
+    }
+
+    private void wait100ms() {
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     protected void processNewScramble() {
@@ -400,6 +367,18 @@ public class MainActivity extends AppCompatActivity {
                 });
                 // generate and add first scramble to scramble list
                 scrambles.add(PuzzleRegistry.valueOf(puzzleProperties[0]).getScrambler().generateScrambles(1)[0]);
+            }
+            if (scrambles.size() == winsList.size()) {
+                /* It happens when user already want to get the next scramble, but it has not been generated yet.
+                // With a usual use of the program, it is almost impossible to achieve such a situation.
+                // We set text "Generating scramble..." and wait for it to be generated */
+                runOnUiThread(() -> {
+                    setScrambleFontSize(25, textViewScramble1, textViewScramble2);
+                    setNewScramble(getString(R.string.generating_scramble), textViewScramble1, textViewScramble2);
+                        });
+                while (scrambles.size() == winsList.size()) {
+                    wait100ms();
+                }
             }
             runOnUiThread(() -> {
                 // set last scramble from scramble list

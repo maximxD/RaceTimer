@@ -63,15 +63,11 @@ public class MyPopupWindow extends PopupWindow {
 
         for (Button button : buttons) {
             button.setOnClickListener(view -> {
-                changePuzzle(PUZZLES_DICT, button, mainActivity);
+                mainActivity.setPuzzleProperties(PUZZLES_DICT.get(button.getId()));
                 mainActivity.resetAll();
                 this.dismiss();
             });
         }
-    }
-
-    private void changePuzzle(Map<Integer, String[]> PUZZLES_DICT, Button button, MainActivity mainActivity) {
-        mainActivity.setPuzzleProperties(PUZZLES_DICT.get(button.getId()));
     }
 
     private Map<Integer, String[]> getIdToPuzzleDict(int[] BUTTONS_IDS){
